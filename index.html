@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru-RU">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Brainoid Game</title>
+  <link rel="stylesheet" href="/styles/main.css" />
+  <link rel="stylesheet" href="/styles/game.css" />
+</head>
+
+<body>
+  <header>
+    <h2>Brainoid Game</h1>
+      <nav>
+        <a href="#">GitHub</a>
+        <a href="#">About</a>
+      </nav>
+  </header>
+
+  <main>
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Main menu -->
+    <div id="main-menu">
+      <h1>Моя игра</h1>
+      <button id="btn-select-level">Играть</button>
+      <button id="btn-leaderboard">Таблица лидеров</button>
+      <button id="btn-about">Про игру</button>
+    </div>
+
+    <div id="about">
+      <!-- TODO: enable scrolling overflow-y: auto;-->
+      <button id="btn-about-back">Назад в Главное Меню</button>
+    </div>
+
+    <div id="leaderboard">
+      <!-- TODO -->
+      <button id="btn-leaderboard-back">Назад в Главное Меню</button>
+    </div>
+
+    <div id="select-level">
+      <h2>Выберите Уровень</h2>
+      <div id="level-list">
+        <!-- Уровни будут добавлены сюда JavaScript -->
+      </div>
+      <button id="btn-select-back">Назад в Главное Меню</button>
+    </div>
+
+    <!-- HUD -->
+    <div id="hud">
+      Время: <span id="gcnt__time">N/A</span><br>
+      Жизней: <span id="gcnt__life">N/A</span><br>
+      Монет: <span id="gcnt__coins">N/A</span><br>
+      Применено бонусов: <span id="gcnt__boosters">N/A</span>
+    </div>
+
+    <!-- Magic -->
+    <script src="scripts/main.js" type="module"></script>
+  </main>
+
+  <footer>
+    &copy; 2025 Brainoid
+  </footer>
+</body>
+
+</html>

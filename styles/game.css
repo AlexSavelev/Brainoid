@@ -1,0 +1,68 @@
+canvas {
+  background-color: #333;
+  border-radius: 8px;
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* ============================================================== TODO */
+}
+
+#main-menu,
+#select-level {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  /* position: absolute;
+  top: 0;
+  left: 0; */
+  background-color: rgba(0, 0, 0, 0.8);
+  /* padding: 20px;
+  border-radius: 10px; */
+  text-align: center;
+  display: block;
+  /* ============================================================== TODO */
+}
+
+#main-menu button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#hud {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: white;
+  font-size: 16px;
+  display: none;
+  /* ============================================================== TODO */
+}
+
+#level-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.level-item {
+  width: 200px;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.level-item img {
+  max-width: 100%;
+  height: auto;
+}
+
+.level-item:hover {
+  background-color: #f9f9f9;
+}
