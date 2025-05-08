@@ -47,12 +47,12 @@ export class LeaderboardManager {
   receiveLeaderboardRecords() {
     const url = '/api/records';
     try {
-      const response = await fetch(url);
+      const response = fetch(url);
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
       }
 
-      const json = await response.json();
+      const json = response.json();
       console.log(json);
 
     } catch (error) {
