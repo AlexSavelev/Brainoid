@@ -24,6 +24,7 @@ async function handler(request: Request): Promise<Response> {
 
   } catch (e) {
     if (e instanceof Deno.errors.NotFound) {
+      console.log(`Not found ${pathname}`);
       return new Response('404 Not Found', { status: 404 });
     }
 
