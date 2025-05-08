@@ -7,15 +7,13 @@ async function handler(request: Request): Promise<Response> {
   let pathname = url.pathname;
 
   if (pathname == '/') {
-    filepath = '/index.html';
+    pathname = '/index.html';
   }
 
-  // filepath = '.' + filepath; TODO
-
   try {
-    const file = await Deno.readFile(filepath);
+    const file = await Deno.readFile(pathname);
 
-    const extension = extname(filepath).toLowerCase();
+    const extension = extname(pathname).toLowerCase();
     const mediaType = contentType(extension) || 'application/octet-stream';
 
     return new Response(file, {
@@ -29,7 +27,7 @@ async function handler(request: Request): Promise<Response> {
       return new Response('404 Not Found', { status: 404 });
     }
 
-    console.error(`Error serving ${filepath}: ${e}`);
+    console.error(`Error serving ${pathname}: ${e}`);
 
     return new Response('500 Internal Server Error', { status: 500 });
   }
