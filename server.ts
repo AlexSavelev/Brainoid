@@ -21,7 +21,7 @@ async function handler(request: Request): Promise<Response> {
   pathname = '.' + pathname;
 
   // DB
-  if (pathname == './api/results' && request.method == 'GET') {
+  if (pathname == './api/records' && request.method == 'GET') {
     const data: RecordItem[] = [];
     for await (const entry of kv.list({ prefix: ['records'] })) {
       data.push(entry.value as RecordItem);
@@ -34,7 +34,7 @@ async function handler(request: Request): Promise<Response> {
     });
   }
 
-  if (pathname == './api/results' && request.method == 'POST') {
+  if (pathname == './api/records' && request.method == 'POST') {
     const body = await request.json();
 
     if (!body.level || !body.username || !body.time) {
@@ -52,7 +52,7 @@ async function handler(request: Request): Promise<Response> {
     });
   }
 
-  if (pathname.startsWith('./api/results') && request.method == 'GET') {
+  if (pathname.startsWith('./api/records') && request.method == 'GET') {
     const keys = pathname.substring(13).split('/');
     const result = await kv.get(['records', keys[0], keys[1]]);
 
@@ -67,7 +67,7 @@ async function handler(request: Request): Promise<Response> {
     });
   }
 
-  if (pathname.startsWith('./api/results') && request.method == 'PUT') {
+  if (pathname.startsWith('./api/records') && request.method == 'PUT') {
     const body = await request.json();
 
     if (!body.level || !body.username || !body.time) {
