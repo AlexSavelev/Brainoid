@@ -10,6 +10,8 @@ async function handler(request: Request): Promise<Response> {
     pathname = '/index.html';
   }
 
+  pathname = '.' + pathname;
+
   try {
     const file = await Deno.readFile(pathname);
 
