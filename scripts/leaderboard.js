@@ -1,5 +1,6 @@
+import { LEVELS } from '/scripts/assets.js'
+
 export function isValidName(username) {
-  // TODO
   if (username.length < 3) {
     return { ok: false, mes: 'Слишком короткое имя.' };
   }
@@ -10,7 +11,7 @@ export function isValidName(username) {
 }
 
 function getLevelDisplayName(levelname) {
-  return `DISPLAY_${levelname}`;
+  return LEVELS[levelname]['name'];
 }
 
 function getHeaderDisplayName(headerTxt, sortOption) {
@@ -38,8 +39,17 @@ export class LeaderboardManager {
   }
 
   saveUserResults(username, levelname, time) {
-    // TODO
-    console.log('Save', username, levelname, time);
+    fetch('https://brainoid.deno.dev/api/records', {
+      method: 'PUT',
+      body: JSON.stringify({
+        level: levelname,
+        username: username,
+        time: time
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    });
   }
 
   getSortOption(levelname) {

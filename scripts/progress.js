@@ -37,10 +37,6 @@ export class Progress {
   }
 
   collectCoin() {
-    // TODO
-    this.status = STATUS_WON;
-    return;
-
     this.coins_collected += 1;
     if (this.coins_collected == this.coins_total) {
       this.status = STATUS_WON;
