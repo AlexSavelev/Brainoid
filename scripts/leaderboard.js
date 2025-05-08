@@ -49,7 +49,7 @@ export class LeaderboardManager {
     try {
       const response = fetch(url);
       if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
+        throw new Error(`Response: ${response}`);
       }
 
       const json = response.json();
