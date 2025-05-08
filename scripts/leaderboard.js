@@ -44,10 +44,10 @@ export class LeaderboardManager {
     console.log('Save', username, levelname, time);
   }
 
-  receiveLeaderboardRecords() {
+  async receiveLeaderboardRecords() {
     const url = 'https://brainoid.deno.dev/api/records';
     try {
-      const response = fetch(url);
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Response: ${response}`);
       }
@@ -99,7 +99,7 @@ export class LeaderboardManager {
     });
   }
 
-  updateLeaderboard(container) {
+  async updateLeaderboard(container) {
     // clear
     container.innerHTML = '';
     // receive
