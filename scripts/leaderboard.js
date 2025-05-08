@@ -46,12 +46,13 @@ export class LeaderboardManager {
 
   async receiveLeaderboardRecords() {
     const url = 'https://brainoid.deno.dev/api/records';
+    let jsonRecords = [];
     try {
       const response = await fetch(url);
+      jsonRecords = response.json();
       if (!response.ok) {
         throw new Error(`Response: ${response}`);
       }
-      const records = response.json();
     } catch (error) {
       console.error(error.message);
       this.allLeaderboardRecords = [];
@@ -59,7 +60,7 @@ export class LeaderboardManager {
     }
 
     this.allLeaderboardRecords = {};
-    for (const record of records) {
+    for (const record of jsonRecords) {
       if (!(record.level in this.allLeaderboardRecords)) {
         this.allLeaderboardRecords[record.level] = [];
       }
