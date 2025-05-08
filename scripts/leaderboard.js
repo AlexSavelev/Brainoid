@@ -45,7 +45,7 @@ export class LeaderboardManager {
   }
 
   receiveLeaderboardRecords() {
-    const url = '/api/records';
+    const url = 'https://brainoid.deno.dev/api/records';
     try {
       const response = fetch(url);
       if (!response.ok) {
