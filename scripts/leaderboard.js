@@ -20,7 +20,7 @@ function getHeaderDisplayName(headerTxt, sortOption) {
   }
   // Display
   switch (headerTxt) {
-    case 'name':
+    case 'username':
       return prefix + 'Имя';
     case 'time':
       return prefix + 'Время';
@@ -51,34 +51,39 @@ export class LeaderboardManager {
       if (!response.ok) {
         throw new Error(`Response: ${response}`);
       }
-
-      const json = response.json();
-      console.log(json);
-
+      const records = response.json();
     } catch (error) {
       console.error(error.message);
+      this.allLeaderboardRecords = [];
+      return;
     }
 
-
+    this.allLeaderboardRecords = {};
+    for (const record of records) {
+      if (!(record.level in this.allLeaderboardRecords)) {
+        this.allLeaderboardRecords[record.level] = [];
+      }
+      this.allLeaderboardRecords[record.level].push({ username: record.username, time: record.time });
+    }
     // TODO: recieve
-    const leaderboardData = {
-      'Level1': [
-        { name: 'Alice', time: 65 },
-        { name: 'Bob', time: 72 },
-        { name: 'Charlie', time: 58 },
-        { name: 'David', time: 80 },
-        { name: 'Eve', time: 61 },
-        { name: 'Joker', time: 55 }
-      ],
-      'Level2': [
-        { name: 'Alice', time: 120 },
-        { name: 'Bob', time: 135 },
-        { name: 'Charlie', time: 110 },
-        { name: 'David', time: 145 },
-        { name: 'Eve', time: 115 }
-      ]
-    };
-    this.allLeaderboardRecords = leaderboardData;
+    // const leaderboardData = {
+    //   'Level1': [
+    //     { name: 'Alice', time: 65 },
+    //     { name: 'Bob', time: 72 },
+    //     { name: 'Charlie', time: 58 },
+    //     { name: 'David', time: 80 },
+    //     { name: 'Eve', time: 61 },
+    //     { name: 'Joker', time: 55 }
+    //   ],
+    //   'Level2': [
+    //     { name: 'Alice', time: 120 },
+    //     { name: 'Bob', time: 135 },
+    //     { name: 'Charlie', time: 110 },
+    //     { name: 'David', time: 145 },
+    //     { name: 'Eve', time: 115 }
+    //   ]
+    // };
+    // record.level in this.allLeaderboardRecords
   }
 
   getSortOption(levelname) {
@@ -103,7 +108,7 @@ export class LeaderboardManager {
     // clear
     container.innerHTML = '';
     // receive
-    this.receiveLeaderboardRecords();
+    await this.receiveLeaderboardRecords();
     // update
     for (const [levelname, records] of Object.entries(this.allLeaderboardRecords)) {
       const leaderboardDiv = this.createLeaderboard(container, levelname, records);
@@ -132,7 +137,7 @@ export class LeaderboardManager {
     const tbody = document.createElement('tbody');
 
     // table header
-    const headers = ['name', 'time'];
+    const headers = ['username', 'time'];
     const headerRow = document.createElement('tr');
     headers.forEach(headerName => {
       const header = document.createElement('th');
@@ -177,12 +182,12 @@ export class LeaderboardManager {
     for (let i = 0; i < Math.min(rowsToShow, records.length); i++) {
       const entry = records[i];
       const row = document.createElement('tr');
-      const nameCell = document.createElement('td');
-      nameCell.textContent = entry.name;
+      const usernameCell = document.createElement('td');
+      usernameCell.textContent = entry.username;
       const timeCell = document.createElement('td');
       timeCell.textContent = entry.time;
 
-      row.appendChild(nameCell);
+      row.appendChild(usernameCell);
       row.appendChild(timeCell);
       tbody.appendChild(row);
     }
