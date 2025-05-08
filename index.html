@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Brainoid Game</title>
+  <title>Brainoid Game by Savelev A.</title>
   <link rel="stylesheet" href="/styles/main.css" />
   <link rel="stylesheet" href="/styles/game.css" />
 </head>
@@ -12,33 +12,32 @@
   <header>
     <h2>Brainoid Game</h1>
       <nav>
-        <a href="#">GitHub</a>
+        <a href="#">GitHub</a> <!-- TODO -->
         <a href="#">About</a>
       </nav>
   </header>
 
   <main>
-    <canvas id="game-canvas"></canvas>
+    <canvas id="game-canvas" class="overlay"></canvas>
 
     <!-- Main menu -->
-    <div id="main-menu">
+    <div id="main-menu" class="overlay">
       <h1>Моя игра</h1>
       <button id="btn-select-level">Играть</button>
       <button id="btn-leaderboard">Таблица лидеров</button>
       <button id="btn-about">Про игру</button>
     </div>
 
-    <div id="about">
-      <!-- TODO: enable scrolling overflow-y: auto;-->
+    <div id="about" class="overlay scrollable">
       <button id="btn-about-back">Назад в Главное Меню</button>
     </div>
 
-    <div id="leaderboard">
-      <!-- TODO -->
+    <div id="leaderboard-screen" class="overlay scrollable">
+      <div id="leaderboard-container"></div>
       <button id="btn-leaderboard-back">Назад в Главное Меню</button>
     </div>
 
-    <div id="select-level">
+    <div id="select-level" class="overlay scrollable">
       <h2>Выберите Уровень</h2>
       <div id="level-list">
         <!-- Уровни будут добавлены сюда JavaScript -->
@@ -47,11 +46,28 @@
     </div>
 
     <!-- HUD -->
-    <div id="hud">
+    <div id="hud" class="overlay prior">
       Время: <span id="gcnt__time">N/A</span><br>
       Жизней: <span id="gcnt__life">N/A</span><br>
       Монет: <span id="gcnt__coins">N/A</span><br>
       Применено бонусов: <span id="gcnt__boosters">N/A</span>
+    </div>
+
+    <div id="game-over-screen" class="overlay prior game-results">
+      <div class="content">
+        <h2>Игра окончена!</h2>
+        <p>Вы проиграли</p>
+        <button id="btn-game-over-back">В главное меню</button>
+      </div>
+    </div>
+
+    <div id="victory-screen" class="overlay prior game-results">
+      <div class="content">
+        <h2>Поздравляем!</h2>
+        <p>Победа вас настигла! Время: <span id="vicscreen__time">N/A</span></p>
+        <button id="btn-victory-save">Сохранить результат</button>
+        <button id="btn-victory-back">Выйти без сохранения</button>
+      </div>
     </div>
 
     <!-- Magic -->

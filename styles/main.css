@@ -24,6 +24,8 @@ header {
 }
 
 main {
+  position: relative;
+
   flex: none;
   overflow: hidden;
   padding: 20px;
@@ -33,6 +35,24 @@ main {
   margin: auto;
   width: 1024px;
   height: 576px;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  border-radius: 8px;
+}
+
+.overlay.prior {
+  z-index: 1;
+}
+
+.scrollable {
+  overflow-y: auto;
 }
 
 footer {

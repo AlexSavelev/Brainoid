@@ -96,6 +96,13 @@ export default class Level {
 
     // Timeouts
     this.push_timeout = 0;
+
+    // Debug
+    if (DEBUG_ENABLED) {
+      this.d_start = [];
+      this.d_to = [];
+      this.d_plat = [];
+    }
   }
 
   update(deltaTime) {

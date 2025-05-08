@@ -37,6 +37,10 @@ export class Progress {
   }
 
   collectCoin() {
+    // TODO
+    this.status = STATUS_WON;
+    return;
+
     this.coins_collected += 1;
     if (this.coins_collected == this.coins_total) {
       this.status = STATUS_WON;
@@ -45,5 +49,13 @@ export class Progress {
 
   applyBooster() {
     this.boosters_applied += 1;
+  }
+
+  get timeEllapsedSeconds() {
+    return Math.floor(this.time_ellapsed / 1000);
+  }
+
+  get timeEllapsedContext() {
+    return `${this.timeEllapsedSeconds} секунд`;
   }
 };

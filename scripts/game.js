@@ -1,4 +1,5 @@
 import Level from '/scripts/level.js';
+import { LeaderboardManager, isValidName } from '/scripts/leaderboard.js';
 
 import { LEVELS } from '/scripts/assets.js';
 import { RENDER_FLUSH_INTERVAL, RENDER_MODIFIER, RENDER_OPTIONS } from '/scripts/constants.js';
@@ -12,6 +13,10 @@ const STATE_LEADERBOARD = Symbol.for('game/state/scoreboard');
 const STATE_ABOUT = Symbol.for('game/state/scoreboard');
 const STATE_SELECT_LEVEL = Symbol.for('game/state/scoreboard');
 const STATE_PLAYING = Symbol.for('game/state/playing');
+const STATE_GAMERESULTS = Symbol.for('game/state/gameresults');
+
+const RESULT_VICTORY = Symbol.for('game/result/victory');
+const RESULT_GAME_OVER = Symbol.for('game/result/gameover');
 
 
 export default class GameInstance {
@@ -26,6 +31,9 @@ export default class GameInstance {
     this.tick = this.tick.bind(this);  // For RenderMachine
 
     this.bindAllControls();
+
+    // Leaderboard & records
+    this.leaderboardManager = new LeaderboardManager();
   }
 
   /* ===== UI ===== */
@@ -78,15 +86,15 @@ export default class GameInstance {
     this.uiset.btnAbout.addEventListener('click', () => {
       this.gotoAbout();
     });
-    this.uiset.btnAboutBack.addEventListener('click', () => {
-      this.gotoMainMenu();
-    });
-    this.uiset.btnLeaderboardBack.addEventListener('click', () => {
-      this.gotoMainMenu();
-    });
-    this.uiset.btnSelectBack.addEventListener('click', () => {
-      this.gotoMainMenu();
-    });
+
+    this.gotoMainMenu = this.gotoMainMenu.bind(this);  // For next binding
+    this.gotoMainMenuFromGameResults = this.gotoMainMenuFromGameResults.bind(this);
+
+    this.uiset.btnAboutBack.addEventListener('click', this.gotoMainMenu);
+    this.uiset.btnLeaderboardBack.addEventListener('click', this.gotoMainMenu);
+    this.uiset.btnSelectBack.addEventListener('click', this.gotoMainMenu);
+    this.uiset.btnGameOverBack.addEventListener('click', this.gotoMainMenu);
+    this.uiset.btnVictoryBack.addEventListener('click', this.gotoMainMenuFromGameResults);
     // Levels
     for (const level_id of Object.keys(LEVELS)) {
       this.addLevelToSelector(level_id);
@@ -98,14 +106,32 @@ export default class GameInstance {
       [
         this.uiset.mainMenu, this.uiset.about,
         this.uiset.leaderboard, this.uiset.selectLevel,
-        this.uiset.hud, this.uiset.canvas
+        this.uiset.hud, this.uiset.canvas,
+        this.uiset.gameOver, this.uiset.victory
       ]) {
       elem.style.display = 'none';
     }
+    // Custom hide
+    this.setElemOpacity(this.uiset.victory, 0);
+    this.setElemOpacity(this.uiset.gameOver, 0);
+  }
+
+  hideElem(elem) {
+    elem.style.display = 'none';
   }
 
   showElem(elem) {
     elem.style.display = 'block';
+  }
+
+  showElemFlex(elem) {
+    elem.style.display = 'flex';
+  }
+
+  setElemOpacity(elem, opacity) {
+    setTimeout(() => {
+      elem.style.opacity = opacity;
+    }, 10);
   }
 
   /* ===== GOTO ===== */
@@ -131,6 +157,7 @@ export default class GameInstance {
   gotoLeaderboard() {
     this.state = STATE_LEADERBOARD;
     this.hideAll();
+    this.leaderboardManager.updateLeaderboard(this.uiset.leaderboardContainer);
     this.showElem(this.uiset.leaderboard);
   }
 
@@ -139,6 +166,26 @@ export default class GameInstance {
     this.hideAll();
     this.showElem(this.uiset.hud);
     this.showElem(this.uiset.canvas);
+  }
+
+  gotoMainMenuFromGameResults() {
+    this.unloadLevel();
+    this.unbindSaveResult();
+    this.gotoMainMenu();
+  }
+
+  gotoGameResults(result) {
+    this.state = STATE_GAMERESULTS;
+    this.hideElem(this.uiset.hud);
+    if (result == RESULT_VICTORY) {
+      this.bindSaveResult();
+      this.showElemFlex(this.uiset.victory);
+      this.uiset.victoryCounterTime.textContent = this.level.progress.timeEllapsedContext;
+      this.setElemOpacity(this.uiset.victory, 1);
+    } else if (result == RESULT_GAME_OVER) {
+      this.showElemFlex(this.uiset.gameOver);
+      this.setElemOpacity(this.uiset.gameOver, 1);
+    }
   }
 
   /* ===== States ===== */
@@ -193,7 +240,7 @@ export default class GameInstance {
   }
 
   render(xi) {
-    if (this.state === STATE_PLAYING) {
+    if (this.state === STATE_PLAYING || this.state === STATE_GAMERESULTS) {
       this.renderGame();
       return;
     }
@@ -205,7 +252,7 @@ export default class GameInstance {
     // Level
     this.level.render(this.ctx, this.renderModifier);
     // HUD
-    this.uiset.counterTime.textContent = `${Math.floor(this.level.progress.time_ellapsed / 1000)} секунд`;
+    this.uiset.counterTime.textContent = this.level.progress.timeEllapsedContext;
     this.uiset.counterLife.textContent = this.level.progress.game_lifes;
     this.uiset.counterCoins.textContent = `${this.level.progress.coins_collected}/${this.level.progress.coins_total}`;
     this.uiset.counterBoosters.textContent = this.level.progress.boosters_applied;
@@ -215,11 +262,10 @@ export default class GameInstance {
     this.level.update(deltaTime);
     // Checkout status
     var status = this.level.progress.status;
-    // TODO: win & died
     if (status == STATUS_WON) {
-      console.log('WON!');  // TODO
+      this.gotoGameResults(RESULT_VICTORY);
     } else if (status == STATUS_DIED) {
-      console.log('DIE!');  // TODO
+      this.gotoGameResults(RESULT_GAME_OVER);
     }
   }
 
@@ -244,7 +290,6 @@ export default class GameInstance {
 
   unloadLevel() {
     cancelAnimationFrame(this.frame);
-    this.state = STATE_PENDING;
     this.level = null;
     this.unbindPlayControls();
   }
@@ -261,7 +306,31 @@ export default class GameInstance {
     removeEventListener('click', this.levelPushEvent);
   }
 
+  // RESULTS
 
+  bindSaveResult() {
+    this.boundSaveResult = this.saveResultAndExit.bind(this, this.level.name, this.level.progress.timeEllapsedSeconds);
+    this.uiset.btnVictorySave.addEventListener('click', this.boundSaveResult);
+  }
 
+  unbindSaveResult() {
+    if (this.boundSaveResult) {
+      this.uiset.btnVictorySave.removeEventListener('click', this.boundSaveResult);
+      this.boundSaveResult = null;  // clear bind info
+    }
+  }
+
+  saveResultAndExit(levelname, time) {
+    this.unbindSaveResult();
+    let username;
+    let validationVerdict = { ok: true };
+    do {
+      username = prompt((validationVerdict.ok ? '' : validationVerdict.mes + ' ') + 'Введите ваше имя');
+      validationVerdict = isValidName(username);
+    } while (!validationVerdict.ok);
+    this.leaderboardManager.saveUserResults(username, levelname, time);
+    // Exit
+    this.gotoMainMenuFromGameResults();
+  }
 
 }

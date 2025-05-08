@@ -1,8 +1,6 @@
 import GameInstance from "/scripts/game.js";
 import { GAME_WIDTH, GAME_HEIGHT } from "/scripts/constants.js";
 
-// Setting up game container
-
 // Setting up canvas & context
 var canvas = document.getElementById('game-canvas');
 var ctx = canvas.getContext('2d');
@@ -28,7 +26,8 @@ var uiset = {
   about: document.getElementById('about'),
   btnAboutBack: document.getElementById('btn-about-back'),
 
-  leaderboard: document.getElementById('leaderboard'),
+  leaderboard: document.getElementById('leaderboard-screen'),
+  leaderboardContainer: document.getElementById('leaderboard-container'),
   btnLeaderboardBack: document.getElementById('btn-leaderboard-back'),
 
   selectLevel: document.getElementById('select-level'),
@@ -39,7 +38,15 @@ var uiset = {
   counterTime: document.getElementById('gcnt__time'),
   counterLife: document.getElementById('gcnt__life'),
   counterCoins: document.getElementById('gcnt__coins'),
-  counterBoosters: document.getElementById('gcnt__boosters')
+  counterBoosters: document.getElementById('gcnt__boosters'),
+
+  gameOver: document.getElementById('game-over-screen'),
+  btnGameOverBack: document.getElementById('btn-game-over-back'),
+
+  victory: document.getElementById('victory-screen'),
+  victoryCounterTime: document.getElementById('vicscreen__time'),
+  btnVictorySave: document.getElementById('btn-victory-save'),
+  btnVictoryBack: document.getElementById('btn-victory-back')
 };
 
 // GameInstance
