@@ -66,7 +66,7 @@ export class LeaderboardManager {
     // receive & update
     fetch("https://brainoid.deno.dev/api/records")
       .then(response => response.json())
-      .then(data => {
+      .then(jsonRecords => {
         this.allLeaderboardRecords = {};
         for (const record of jsonRecords) {
           if (!(record.level in this.allLeaderboardRecords)) {
