@@ -1,5 +1,5 @@
 {
   "tasks": {
-    "deploy": "deno run server.ts"
+    "deploy": "deno run --unstable-kv server.ts"
   }
 }
