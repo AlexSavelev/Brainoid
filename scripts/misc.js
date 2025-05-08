@@ -143,9 +143,6 @@ export function twoSegmentsIntersection(a, b, c, d) {
 }
 
 export function collidesTwoSegmentsTracing(traceStart, traceEnd, segA, segB) {
-  if (isNaN(traceStart.x) || isNaN(traceEnd.x)) {
-    throw new Error("Invalid trace"); // TODO
-  }
   const result = twoSegmentsIntersection(traceStart, traceEnd, segA, segB);
   if (result.x !== null && inSegment(result.x, [0, 1]) && inSegment(result.y, [0, 1])) {
     return result.x;

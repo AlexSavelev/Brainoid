@@ -18,7 +18,7 @@ export default class Level {
     // Loading assets
     this.tileset = new Tileset(TILES, TILES_INFO['tw'], TILES_INFO['th'], TILES_INFO['rows'], TILES_INFO['columns']);
     this.background = new Background(BACKGROUNDS[this.background_name]['img']);
-    this.audio = new Audio(BACKGROUNDS[this.background_name]['audio_path']);  // TODO play
+    this.setupBackgroundAudio();
 
     // Configuring level
     this.width = LEVELS_INFO['w'];
@@ -103,6 +103,23 @@ export default class Level {
       this.d_to = [];
       this.d_plat = [];
     }
+  }
+
+  setupBackgroundAudio() {
+    this.audio = new Audio(BACKGROUNDS[this.background_name]['audio']);
+    document.getElementById('game-canvas').appendChild(this.audio);
+    this.audio.addEventListener('canplaythrough', (event) => {
+      this.audio.loop = true;
+      this.audio.play();
+    });
+  }
+
+  stopBackgroundAudio() {
+    this.audio.remove();  // TODO: fade out
+  }
+
+  destruct() {
+    this.stopBackgroundAudio();
   }
 
   update(deltaTime) {

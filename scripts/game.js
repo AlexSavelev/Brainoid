@@ -46,7 +46,7 @@ export default class GameInstance {
     const levelItem = document.createElement('div');
     levelItem.classList.add('level-item');
     levelItem.innerHTML = `
-        <img src="${level_placeholder}" alt="${level_name}">
+        <div class="level-placeholder-container"><img src="${level_placeholder}" alt="${level_name}"/></div>
         <h3>${level_name}</h3>
         <p>${level_desc}</p>
     `;
@@ -93,7 +93,7 @@ export default class GameInstance {
     this.uiset.btnAboutBack.addEventListener('click', this.gotoMainMenu);
     this.uiset.btnLeaderboardBack.addEventListener('click', this.gotoMainMenu);
     this.uiset.btnSelectBack.addEventListener('click', this.gotoMainMenu);
-    this.uiset.btnGameOverBack.addEventListener('click', this.gotoMainMenu);
+    this.uiset.btnGameOverBack.addEventListener('click', this.gotoMainMenuFromGameResults);
     this.uiset.btnVictoryBack.addEventListener('click', this.gotoMainMenuFromGameResults);
     // Levels
     for (const level_id of Object.keys(LEVELS)) {
@@ -290,6 +290,7 @@ export default class GameInstance {
 
   unloadLevel() {
     cancelAnimationFrame(this.frame);
+    this.level.destruct();
     this.level = null;
     this.unbindPlayControls();
   }

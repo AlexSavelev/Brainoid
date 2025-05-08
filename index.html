@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Brainoid Game by Savelev A.</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="stylesheet" href="/styles/main.css" />
   <link rel="stylesheet" href="/styles/game.css" />
 </head>
@@ -18,31 +19,33 @@
   </header>
 
   <main>
-    <canvas id="game-canvas" class="overlay"></canvas>
+    <canvas id="game-canvas" class="majorscreen overlay"></canvas>
 
     <!-- Main menu -->
-    <div id="main-menu" class="overlay">
-      <h1>Моя игра</h1>
+    <div id="main-menu" class="majorscreen overlay">
+      <h1>Brainoid</h1>
       <button id="btn-select-level">Играть</button>
       <button id="btn-leaderboard">Таблица лидеров</button>
-      <button id="btn-about">Про игру</button>
+      <button id="btn-about">Инфо</button>
     </div>
 
-    <div id="about" class="overlay scrollable">
+    <div id="about" class="majorscreen overlay scrollable">
       <button id="btn-about-back">Назад в Главное Меню</button>
+      <h2>Про игру</h2>
+      <p>TODO</p>
+      <h2>Про автора</h2>
+      <p>TODO</p>
     </div>
 
-    <div id="leaderboard-screen" class="overlay scrollable">
-      <div id="leaderboard-container"></div>
+    <div id="leaderboard-screen" class="majorscreen overlay scrollable">
       <button id="btn-leaderboard-back">Назад в Главное Меню</button>
+      <div id="leaderboard-container"></div>
     </div>
 
-    <div id="select-level" class="overlay scrollable">
-      <h2>Выберите Уровень</h2>
-      <div id="level-list">
-        <!-- Уровни будут добавлены сюда JavaScript -->
-      </div>
+    <div id="select-level" class="majorscreen overlay scrollable">
       <button id="btn-select-back">Назад в Главное Меню</button>
+      <h2>Выберите Уровень</h2>
+      <div id="level-list"></div>
     </div>
 
     <!-- HUD -->
