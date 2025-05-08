@@ -33,8 +33,6 @@ function getLeaderboardID(levelname) {
 
 export class LeaderboardManager {
   constructor() {
-    // TODO: connect to DB
-
     this.allLeaderboardRecords = null;
     this.currentSortOption = {};
   }
@@ -42,49 +40,6 @@ export class LeaderboardManager {
   saveUserResults(username, levelname, time) {
     // TODO
     console.log('Save', username, levelname, time);
-  }
-
-  async receiveLeaderboardRecords() {
-    const url = 'https://brainoid.deno.dev/api/records';
-    let jsonRecords = [];
-    try {
-      const response = await fetch(url);
-      jsonRecords = response.json();
-      if (!response.ok) {
-        throw new Error(`Response: ${response}`);
-      }
-    } catch (error) {
-      console.error(error.message);
-      this.allLeaderboardRecords = [];
-      return;
-    }
-
-    this.allLeaderboardRecords = {};
-    for (const record of jsonRecords) {
-      if (!(record.level in this.allLeaderboardRecords)) {
-        this.allLeaderboardRecords[record.level] = [];
-      }
-      this.allLeaderboardRecords[record.level].push({ username: record.username, time: record.time });
-    }
-    // TODO: recieve
-    // const leaderboardData = {
-    //   'Level1': [
-    //     { name: 'Alice', time: 65 },
-    //     { name: 'Bob', time: 72 },
-    //     { name: 'Charlie', time: 58 },
-    //     { name: 'David', time: 80 },
-    //     { name: 'Eve', time: 61 },
-    //     { name: 'Joker', time: 55 }
-    //   ],
-    //   'Level2': [
-    //     { name: 'Alice', time: 120 },
-    //     { name: 'Bob', time: 135 },
-    //     { name: 'Charlie', time: 110 },
-    //     { name: 'David', time: 145 },
-    //     { name: 'Eve', time: 115 }
-    //   ]
-    // };
-    // record.level in this.allLeaderboardRecords
   }
 
   getSortOption(levelname) {
@@ -105,12 +60,25 @@ export class LeaderboardManager {
     });
   }
 
-  async updateLeaderboard(container) {
+  updateLeaderboard(container) {
     // clear
     container.innerHTML = '';
-    // receive
-    await this.receiveLeaderboardRecords();
-    // update
+    // receive & update
+    fetch("https://brainoid.deno.dev/api/records")
+      .then(response => response.json())
+      .then(data => {
+        this.allLeaderboardRecords = {};
+        for (const record of jsonRecords) {
+          if (!(record.level in this.allLeaderboardRecords)) {
+            this.allLeaderboardRecords[record.level] = [];
+          }
+          this.allLeaderboardRecords[record.level].push({ username: record.username, time: record.time });
+        }
+        this.updateAllLeaderboards(container);
+      });
+  }
+
+  updateAllLeaderboards(container) {
     for (const [levelname, records] of Object.entries(this.allLeaderboardRecords)) {
       const leaderboardDiv = this.createLeaderboard(container, levelname, records);
       container.appendChild(leaderboardDiv);
