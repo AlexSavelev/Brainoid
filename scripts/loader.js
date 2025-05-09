@@ -41,21 +41,19 @@ export default class AssetLoader {
         case ASSET_TYPE_IMG:
           asset.asset = new Image();
           asset.asset.onload = () => {
-            console.log(path);
-            this.checkoutAssetLoaded();
+            this.checkoutAssetLoaded(path);
           }
           asset.asset.src = path;
           break;
         case ASSET_TYPE_AUDIO:
           asset.asset = new Audio();
           asset.asset.oncanplaythrough = () => {
-            console.log(path);
-            this.checkoutAssetLoaded();
+            this.checkoutAssetLoaded(path);
           }
           asset.asset.src = path;
           break;
         default:
-          this.checkoutAssetLoaded();
+          this.checkoutAssetLoaded(path);
           break;
       }
     }
@@ -64,7 +62,6 @@ export default class AssetLoader {
   checkoutAssetLoaded(gameInstance, currentBar, assetName) {
     this.assets[assetName].loaded = true;
     ++this.assetLoaded;
-    console.log(this.assetLoaded, this.assetCount);
     // Update bar
     const widthPerc = `${Math.round(this.assetLoaded / this.assetCount * 100)}%`;
     currentBar.style.width = widthPerc;
