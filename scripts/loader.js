@@ -39,6 +39,7 @@ export default class AssetLoader {
         case 'img':
           asset.asset = new Image();
           asset.asset.onload = () => {
+            console.log(path);
             this.checkoutAssetLoaded();
           }
           asset.asset.src = path;
@@ -52,7 +53,6 @@ export default class AssetLoader {
           asset.asset.src = path;
           break;
         default:
-          console.log(path);
           this.checkoutAssetLoaded();
           break;
       }
@@ -61,6 +61,7 @@ export default class AssetLoader {
 
   checkoutAssetLoaded(gameInstance, currentBar) {
     ++this.assetLoaded;
+    console.log(this.assetLoaded, this.assetCount);
     // Update bar
     const widthPerc = `${Math.round(this.assetLoaded / this.assetCount * 100)}%`;
     currentBar.style.width = widthPerc;
