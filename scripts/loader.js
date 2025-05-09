@@ -78,4 +78,22 @@ export default class AssetLoader {
   getAsset(path) {
     return this.assets[path].asset;
   }
+
+  getAssetBase64(path) {
+    const asset = this.assets[path];
+    if (asset.type != ASSET_TYPE_IMG) {
+      throw new Error('Type of asset is not an image. Can not get base64 encoding');
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = asset.asset.width;
+    canvas.height = asset.asset.height;
+
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(asset.asset, 0, 0);
+
+    const base64 = canvas.toDataURL();
+    canvas.remove();
+
+    return base64;
+  }
 }

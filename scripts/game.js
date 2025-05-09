@@ -46,11 +46,10 @@ export default class GameInstance {
   addLevelToSelector(level_id) {
     const level_name = LEVELS[level_id]['name'];
     const level_desc = LEVELS[level_id]['description'];
-    const level_placeholder = LEVELS[level_id]['placeholder_img'];
+    const level_placeholder = this.assetLoader.getAssetBase64(LEVELS[level_id]['placeholder_img']);
 
     const levelItem = document.createElement('div');
     levelItem.classList.add('level-item');
-    // TODO: placeholder
     levelItem.innerHTML = `
         <div class="level-placeholder-container"><img src="${level_placeholder}" alt="${level_name}"/></div>
         <h3>${level_name}</h3>
@@ -101,10 +100,6 @@ export default class GameInstance {
     this.uiset.btnSelectBack.addEventListener('click', this.gotoMainMenu);
     this.uiset.btnGameOverBack.addEventListener('click', this.gotoMainMenuFromGameResults);
     this.uiset.btnVictoryBack.addEventListener('click', this.gotoMainMenuFromGameResults);
-    // Levels
-    for (const level_id of Object.keys(LEVELS)) {
-      this.addLevelToSelector(level_id);
-    }
   }
 
   hideAll() {
@@ -151,7 +146,12 @@ export default class GameInstance {
   }
 
   onAssetsLoaded() {
-    this.gotoMainMenu();  // entrypoint after all asset loaded
+    // Levels
+    for (const level_id of Object.keys(LEVELS)) {
+      this.addLevelToSelector(level_id);
+    }
+    // entrypoint after all asset loaded
+    this.gotoMainMenu();
   }
 
   gotoMainMenu() {
