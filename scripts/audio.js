@@ -1,7 +1,4 @@
-const audioContainer = document.getElementById('audio-container');
-
 export function audioSetupAndPlay(audio, loop = true) {
-  audioContainer.appendChild(audio);
   audio.loop = loop;
   audio.currentTime = 0;
   audio.autoplay = true;

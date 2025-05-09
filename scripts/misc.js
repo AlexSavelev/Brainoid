@@ -1,5 +1,26 @@
 import { COLLISION_SEGMENT_PADDING } from "/scripts/constants.js";
 
+export function formatDatetime(timestamp, format) {
+  const date = new Date(timestamp);
+  const dateObject = {
+    'Y': date.getFullYear(),
+    'm': String(date.getMonth()).padStart(2, '0'),
+    'd': String(date.getDate()).padStart(2, '0'),
+    'H': String(date.getHours()).padStart(2, '0'),
+    'i': String(date.getMinutes()).padStart(2, '0'),
+    's': String(date.getSeconds()).padStart(2, '0'),
+  };
+  let result = '';
+  for (const char of format) {
+    if (char in dateObject) {
+      result += dateObject[char];
+    } else {
+      result += char;
+    }
+  }
+  return result;
+}
+
 // Returns a random number between min (inclusive) and max (exclusive)
 export function randomIntInRange(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;

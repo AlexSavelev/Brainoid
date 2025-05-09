@@ -5,7 +5,12 @@ import { extname } from 'https://deno.land/std@0.208.0/path/mod.ts';
 interface RecordItem {
   level: string;
   username: string;
-  time: number;
+  duration: number;
+  timestamp: number;
+}
+
+function generateID(): string {
+  return crypto.randomUUID();
 }
 
 async function handler(request: Request): Promise<Response> {
@@ -37,12 +42,17 @@ async function handler(request: Request): Promise<Response> {
   if (pathname == './api/records' && request.method == 'POST') {
     const body = await request.json();
 
-    if (!body.level || !body.username || !body.time) {
+    if (!body.level || !body.username || !(body.duration || body.duration === 0) || !body.timestamp) {
       return new Response("Missing request body", { status: 400 });
     }
 
-    const newItem: RecordItem = { level: body.level, username: body.username, time: body.time };
-    await kv.set(['records', body.level, body.username], newItem);
+    const newItem: RecordItem = {
+      level: body.level,
+      username: body.username,
+      duration: body.duration,
+      timestamp: body.timestamp
+    };
+    await kv.set(['records', body.level, generateID()], newItem);
 
     kv.close();
 
@@ -52,41 +62,52 @@ async function handler(request: Request): Promise<Response> {
     });
   }
 
+  if (pathname == './api/records/clear' && request.method == 'POST') {
+    const keys = kv.list({ prefix: ['records'] });
+
+    for await (const entry of keys) {
+      await kv.delete(entry.key);
+    }
+
+    kv.close();
+    return new Response(JSON.stringify({}), {
+      headers: { "Content-Type": "application/json" },
+      status: 202 // Cleared
+    });
+  }
+
   if (pathname.startsWith('./api/records') && request.method == 'GET') {
-    const keys = pathname.substring(13).split('/');
-    const result = await kv.get(['records', keys[0], keys[1]]);
+    const key = pathname.substring(13);
+    const result = await kv.get(['records', key]);
 
     if (result.value === null) {
+      kv.close();
       return new Response("Data not found", { status: 404 });
     }
     
     kv.close();
-
     return new Response(JSON.stringify(result.value), {
       headers: { "Content-Type": "application/json" },
     });
   }
 
-  if (pathname.startsWith('./api/records') && request.method == 'PUT') {
+  if (pathname.startsWith('./api/records') && request.method == 'POST') {
     const body = await request.json();
 
-    if (!body.level || !body.username || !body.time) {
+    if (!body.level || !body.username || !(body.duration || body.duration === 0) || !body.timestamp) {
       return new Response("Missing request body", { status: 400 });
     }
 
-    const existing = await kv.get(['records', body.level, body.username]);
-    if (existing.value && existing.value.time <= body.time) {
-      return new Response({'rewritten': false}, {
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    let newItem: RecordItem = { level: body.level, username: body.username, time: body.time };
-    await kv.set(['records', body.level, body.username], newItem);
-
+    const newItem: RecordItem = {
+      level: body.level,
+      username: body.username,
+      duration: body.duration,
+      timestamp: body.timestamp
+    };
+    await kv.set(['records', body.level, generateID()], newItem);
     kv.close();
 
-    return new Response({'rewritten': true}, {
+    return new Response(JSON.stringify(newItem), {
       headers: { "Content-Type": "application/json" },
     });
   }

@@ -333,7 +333,8 @@ export default class GameInstance {
 
   bindSaveResult() {
     if (this.leaderboardManager.db_enabled) {
-      this.boundSaveResult = this.saveResultAndExit.bind(this, this.level.name, this.level.progress.timeEllapsedSeconds);
+      const timestamp = Date.now();
+      this.boundSaveResult = this.saveResultAndExit.bind(this, this.level.name, this.level.progress.timeEllapsedSeconds, timestamp);
       this.uiset.btnVictorySave.addEventListener('click', this.boundSaveResult);
       this.uiset.btnVictorySave.disabled = false;
       this.uiset.btnVictorySave.classList.remove('disabled-btn');
@@ -350,7 +351,7 @@ export default class GameInstance {
     }
   }
 
-  saveResultAndExit(levelname, time) {
+  saveResultAndExit(levelname, duration, timestamp) {
     this.unbindSaveResult();
     let username;
     let validationVerdict = { ok: true };
@@ -358,7 +359,7 @@ export default class GameInstance {
       username = prompt((validationVerdict.ok ? '' : validationVerdict.mes + ' ') + 'Введите ваше имя');
       validationVerdict = isValidName(username);
     } while (!validationVerdict.ok);
-    this.leaderboardManager.saveUserResults(username, levelname, time);
+    this.leaderboardManager.saveUserResults(username, levelname, duration, timestamp);
     // Exit
     this.gotoMainMenuFromGameResults();
   }

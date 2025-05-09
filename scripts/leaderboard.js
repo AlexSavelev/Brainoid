@@ -1,6 +1,6 @@
-import { LEVELS } from '/scripts/assets.js'
+import { formatDatetime } from '/scripts/misc.js'
 
-// TODO: time of proh
+import { LEVELS } from '/scripts/assets.js'
 
 export function isValidName(username) {
   if (username.length < 3) {
@@ -25,13 +25,15 @@ function getHeaderDisplayName(headerTxt, sortOption) {
   switch (headerTxt) {
     case 'username':
       return prefix + 'Имя';
-    case 'time':
-      return prefix + 'Время';
+    case 'duration':
+      return prefix + 'Продолжительность';
+    case 'timestamp':
+      return prefix + 'Установлен';
   }
 }
 
-function getLeaderboardID(levelname) {
-  return `leaderboard__${levelname}`;
+function getDisplayTime(timestamp) {
+  return formatDatetime(timestamp, 'H:i d-m-Y');
 }
 
 export class LeaderboardManager {
@@ -49,16 +51,17 @@ export class LeaderboardManager {
     return this.enable_kv_db;
   }
 
-  saveUserResults(username, levelname, time) {
+  saveUserResults(username, levelname, duration, timestamp) {
     if (!this.enable_kv_db) {
       return;
     }
     fetch('/api/records', {
-      method: 'PUT',
+      method: 'POST',
       body: JSON.stringify({
         level: levelname,
         username: username,
-        time: time
+        duration: duration,
+        timestamp: timestamp
       }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8'
@@ -68,7 +71,7 @@ export class LeaderboardManager {
 
   getSortOption(levelname) {
     if (!(levelname in this.currentSortOption)) {
-      this.currentSortOption[levelname] = { 'key': 'time', 'order_mod': 1, 'cnt': 5 };
+      this.currentSortOption[levelname] = { 'key': 'duration', 'order_mod': 1, 'cnt': 5 };
     }
     return this.currentSortOption[levelname];
   }
@@ -102,7 +105,11 @@ export class LeaderboardManager {
           if (!(record.level in this.allLeaderboardRecords)) {
             this.allLeaderboardRecords[record.level] = [];
           }
-          this.allLeaderboardRecords[record.level].push({ username: record.username, time: record.time });
+          this.allLeaderboardRecords[record.level].push({
+            username: record.username,
+            duration: record.duration,
+            timestamp: record.timestamp
+          });
         }
         this.updateAllLeaderboards(container);
       });
@@ -130,14 +137,14 @@ export class LeaderboardManager {
     container.appendChild(leaderboardDiv);
   }
 
-  createLeaderboard(container, levelname, records, sortOption = { 'key': 'time', 'order_mod': 1, 'cnt': 5 }) {
+  createLeaderboard(container, levelname, records, sortOption = { 'key': 'duration', 'order_mod': 1, 'cnt': 5 }) {
     // Sort
     this.currentSortOption[levelname] = sortOption;
     this.sortByOption(levelname);
 
     // Create
     const leaderboardDiv = document.createElement('div');
-    leaderboardDiv.id = getLeaderboardID(levelname);
+    leaderboardDiv.setAttribute('level', levelname);
     leaderboardDiv.classList.add('leaderboard');
 
     // heading
@@ -151,7 +158,7 @@ export class LeaderboardManager {
     const tbody = document.createElement('tbody');
 
     // table header
-    const headers = ['username', 'time'];
+    const headers = ['username', 'duration', 'timestamp'];
     const headerRow = document.createElement('tr');
     headers.forEach(headerName => {
       const header = document.createElement('th');
@@ -202,11 +209,14 @@ export class LeaderboardManager {
       const row = document.createElement('tr');
       const usernameCell = document.createElement('td');
       usernameCell.textContent = entry.username;
-      const timeCell = document.createElement('td');
-      timeCell.textContent = entry.time;
+      const durationCell = document.createElement('td');
+      durationCell.textContent = entry.duration;
+      const timestampCell = document.createElement('td');
+      timestampCell.textContent = getDisplayTime(entry.timestamp);
 
       row.appendChild(usernameCell);
-      row.appendChild(timeCell);
+      row.appendChild(durationCell);
+      row.appendChild(timestampCell);
       tbody.appendChild(row);
     }
   }
@@ -214,7 +224,7 @@ export class LeaderboardManager {
   findLeaderboardByLevelname(levelname) {
     const leaderboards = document.querySelectorAll(`.leaderboard`);
     for (const leaderboard of leaderboards) {
-      if (leaderboard.id == getLeaderboardID(levelname)) {
+      if (leaderboard.getAttribute('level') == levelname) {
         return leaderboard;
       }
     }

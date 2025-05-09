@@ -35,6 +35,7 @@ export default class AssetLoader {
   }
 
   loadAllAssets(gameInstance, currentBar) {
+    const audioContainer = document.getElementById('audio-container');
     this.checkoutAssetLoaded = this.checkoutAssetLoaded.bind(this, gameInstance, currentBar);
     for (const [path, asset] of Object.entries(this.assets)) {
       switch (asset.type) {
@@ -48,6 +49,7 @@ export default class AssetLoader {
         case ASSET_TYPE_AUDIO:
           asset.asset = new Audio();
           asset.asset.oncanplaythrough = () => {
+            audioContainer.appendChild(asset.asset);
             this.checkoutAssetLoaded(path);
           }
           asset.asset.src = path;
