@@ -60,7 +60,7 @@ export default class AssetLoader {
   checkoutAssetLoaded(gameInstance, currentBar) {
     ++this.assetLoaded;
     // Update bar
-    widthPerc = `${Math.round(this.assetLoaded / this.assetCount * 100)}%`;
+    const widthPerc = `${Math.round(this.assetLoaded / this.assetCount * 100)}%`;
     currentBar.style.width = widthPerc;
     currentBar.innerHTML = widthPerc;
     // Checkout
