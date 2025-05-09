@@ -78,6 +78,10 @@ export default class Vector {
     return d.length();
   }
 
+  headingRads() {
+    return Math.atan2(this.y, this.x);
+  }
+
   equals(x, y) {
     let a, b;
     if (x instanceof Vector) {
