@@ -1,6 +1,6 @@
 // Debugging
 export const DEBUG_ENABLED = false;
-export const WIN_ON_ONE_COIN = true;
+export const WIN_ON_ONE_COIN = false;
 
 // Render
 export const RENDER_FLUSH_INTERVAL = 1;
