@@ -46,11 +46,13 @@ export default class AssetLoader {
         case 'audio':
           asset.asset = new Audio();
           asset.asset.oncanplaythrough = () => {
+            console.log(path);
             this.checkoutAssetLoaded();
           }
           asset.asset.src = path;
           break;
         default:
+          console.log(path);
           this.checkoutAssetLoaded();
           break;
       }
