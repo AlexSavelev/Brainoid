@@ -1,4 +1,5 @@
 import Level from '/scripts/level.js';
+import AssetLoader from "/scripts/loader.js";
 import { LeaderboardManager, isValidName } from '/scripts/leaderboard.js';
 import { audioSetupAndPlay, audioStopAndDestroy } from '/scripts/audio.js';
 
@@ -35,6 +36,9 @@ export default class GameInstance {
 
     // Leaderboard & records
     this.leaderboardManager = new LeaderboardManager();
+
+    // Asset loader
+    this.assetLoader = new AssetLoader();
   }
 
   /* ===== UI ===== */
@@ -46,6 +50,7 @@ export default class GameInstance {
 
     const levelItem = document.createElement('div');
     levelItem.classList.add('level-item');
+    // TODO: placeholder
     levelItem.innerHTML = `
         <div class="level-placeholder-container"><img src="${level_placeholder}" alt="${level_name}"/></div>
         <h3>${level_name}</h3>
@@ -71,7 +76,7 @@ export default class GameInstance {
         );
       }
     };
-    this.levelPushEvent = (event) => {
+    this.levelPushEvent = () => {
       if (this.level) {
         this.level.onPush();
       }
@@ -105,6 +110,7 @@ export default class GameInstance {
   hideAll() {
     for (const elem of
       [
+        this.uiset.loader,
         this.uiset.mainMenu, this.uiset.about,
         this.uiset.leaderboard, this.uiset.selectLevel,
         this.uiset.hud, this.uiset.canvas,
@@ -137,9 +143,20 @@ export default class GameInstance {
 
   /* ===== GOTO ===== */
 
+  gotoLoadState() {
+    this.state = STATE_PENDING;
+    this.hideAll();
+    this.showElem(this.uiset.loader);
+    this.assetLoader.loadAllAssets(this, this.uiset.loaderCurrentBar);
+  }
+
+  onAssetsLoaded() {
+    this.gotoMainMenu();  // entrypoint after all asset loaded
+  }
+
   gotoMainMenu() {
     if (this.state == STATE_PENDING || this.state == STATE_GAMERESULTS) {
-      this.mmAudio = audioSetupAndPlay(BACKGROUNDS['_mainmenu']['audio'], 'main-menu');
+      this.mmAudio = audioSetupAndPlay(this.assetLoader.getAsset(BACKGROUNDS['_mainmenu']['audio']));
     }
     this.state = STATE_MAINMENU;
     this.hideAll();
@@ -196,7 +213,7 @@ export default class GameInstance {
   /* ===== States ===== */
 
   start() {
-    this.gotoMainMenu();
+    this.gotoLoadState();  // entrypoint
   }
 
   tick(time) {
@@ -214,7 +231,7 @@ export default class GameInstance {
     let numberOfUpdates = 0;
     while (this.timing.lag >= RENDER_OPTIONS.step) {
       this.timing.lag -= RENDER_OPTIONS.step;
-      this.update(RENDER_OPTIONS.step, this.timing.total);
+      this.update(RENDER_OPTIONS.step);
       numberOfUpdates++;
       if (numberOfUpdates >= RENDER_OPTIONS.maxUpdates) {
         this.emergencyLagReset();
@@ -227,7 +244,7 @@ export default class GameInstance {
       this.timing.flush_cnt = 0;
       this.ctx.clearRect(0, 0, this.uiset.canvas.width, this.uiset.canvas.height);
     }
-    this.render(this.timing.lag / RENDER_OPTIONS.step);
+    this.render();
     // Push
     this.frame = requestAnimationFrame(this.tick);
   }
@@ -236,7 +253,7 @@ export default class GameInstance {
     this.timing.lag = 0;
   }
 
-  update(deltaTime, totalTime) {
+  update(deltaTime) {
     if (this.state === STATE_PLAYING) {
       this.updateGame(deltaTime);
       return;
@@ -244,7 +261,7 @@ export default class GameInstance {
     // TODO
   }
 
-  render(xi) {
+  render() {
     if (this.state === STATE_PLAYING || this.state === STATE_GAMERESULTS) {
       this.renderGame();
       return;
@@ -266,7 +283,7 @@ export default class GameInstance {
   updateGame(deltaTime) {
     this.level.update(deltaTime);
     // Checkout status
-    let status = this.level.progress.status;
+    const status = this.level.progress.status;
     if (status == STATUS_WON) {
       this.gotoGameResults(RESULT_VICTORY);
     } else if (status == STATUS_DIED) {
@@ -289,7 +306,7 @@ export default class GameInstance {
   }
 
   loadLevel(name) {
-    this.level = new Level(name);
+    this.level = new Level(name, this.assetLoader);
     // TODO
   }
 

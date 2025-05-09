@@ -1,7 +1,6 @@
 export default class Tileset {
-  constructor(img64, tileWidth, tileHeight, tileRows, tileColumns) {
-    this.img = new Image();
-    this.img.src = img64;
+  constructor(img, tileWidth, tileHeight, tileRows, tileColumns) {
+    this.img = img;
     this.width = tileWidth;
     this.height = tileHeight;
     this.rows = tileRows;

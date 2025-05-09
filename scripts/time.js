@@ -1,5 +1,5 @@
 export function timestamp() {
-    return window.performance && window.performance.now
-        ? window.performance.now()
+    return globalThis.performance && globalThis.performance.now
+        ? globalThis.performance.now()
         : new Date().getTime();
 }

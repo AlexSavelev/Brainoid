@@ -12,7 +12,7 @@ canvas {
 
 #main-menu,
 #select-level,
-#about h1,
+#about, #loader h1,
 h2 {
   text-align: center;
 }
@@ -23,6 +23,22 @@ h2 {
   font-size: 16px;
   cursor: pointer;
 } */
+
+/* Loader */
+
+#load-progress-bar {
+  width: 100%;
+  background-color: grey;
+}
+
+#load-progress-current {
+  width: 1%;
+  height: 30px;
+  background-color: green;
+  text-align: center; /* To center it horizontally (if you want) */
+  line-height: 30px; /* To center it vertically */
+  color: white; 
+}
 
 #hud {
   color: white;

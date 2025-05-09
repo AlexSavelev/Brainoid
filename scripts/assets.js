@@ -1,6 +1,6 @@
 export const BACKGROUNDS = {
   '_mainmenu': {
-    'img': '', // TODO
+    'img': '/assets/img/bg_sky.png', // TODO
     'audio': '/assets/audio/a_mainmenu.ogg'
   },
   'sky': {

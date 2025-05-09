@@ -1,15 +1,17 @@
-export function audioSetupAndPlay(path, parentID, loop = true) {
-  const audio = new Audio(path);
-  document.getElementById(parentID).appendChild(audio);
-  audio.addEventListener('canplaythrough', () => {
-    audio.loop = loop;
-    audio.autoplay = true;
-    // audio.play(); // TODO
-    // TODO: load all audio Для корректной работы аудио не забудьте выдать хосту правда на аудио
-  });
+const audioContainer = document.getElementById('audio-container');
+
+export function audioSetupAndPlay(audio, loop = true) {
+  audioContainer.appendChild(audio);
+  audio.loop = loop;
+  audio.currentTime = 0;
+  audio.autoplay = true;
+  audio.play();
+  // TODO: load all audio Для корректной работы аудио не забудьте выдать хосту правда на аудио
   return audio;
 }
 
+// TODO fade out
 export function audioStopAndDestroy(audio) {
-  audio.remove();  // TODO: fade out
+  audio.autoplay = false;
+  audio.pause();
 }

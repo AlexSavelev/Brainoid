@@ -2,6 +2,9 @@ export default function getFullUISet() {
   return {
     canvas: document.getElementById('game-canvas'),
 
+    loader: document.getElementById('loader'),
+    loaderCurrentBar: document.getElementById('load-progress-current'),
+
     mainMenu: document.getElementById('main-menu'),
     btnSelectLevel: document.getElementById('btn-select-level'),
     btnLeaderboard: document.getElementById('btn-leaderboard'),

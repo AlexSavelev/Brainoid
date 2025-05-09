@@ -1,5 +1,7 @@
 import { LEVELS } from '/scripts/assets.js'
 
+// TODO: time of proh
+
 export function isValidName(username) {
   if (username.length < 3) {
     return { ok: false, mes: 'Слишком короткое имя.' };

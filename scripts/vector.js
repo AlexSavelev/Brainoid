@@ -10,8 +10,8 @@ export default class Vector {
   }
 
   lengthSq() {
-    let x = this.x;
-    let y = this.y;
+    const x = this.x;
+    const y = this.y;
     return x * x + y * y;
   }
 
@@ -57,14 +57,9 @@ export default class Vector {
     return this.div(this.length() / newLength);
   }
 
-  headingRads() {
-    let h = Math.atan2(this.y, this.x);
-    return h;
-  };
-
   rotate(rad) {
-    let newHead = this.headingRads() + rad;
-    let len = this.length();
+    const newHead = this.headingRads() + rad;
+    const len = this.length();
     this.x = Math.cos(newHead) * len;
     this.y = Math.sin(newHead) * len;
     return this;
@@ -79,7 +74,7 @@ export default class Vector {
   }
 
   dist(v) {
-    let d = v.copy().sub(this);
+    const d = v.copy().sub(this);
     return d.length();
   }
 

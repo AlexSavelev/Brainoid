@@ -12,14 +12,14 @@ import { BACKGROUNDS, LEVELS, LEVELS_INFO, TILES, TILES_INFO } from '/scripts/as
 import { PLATFORM_PARAM_TO_ANGLE_COEFF, MAX_COLLIDING_RADIUS_RATIO, RAYS_PER_RAD, DEBUG_ENABLED, GAME_LIFES, BEFORE_PUSH_TIMEOUT } from '/scripts/constants.js';
 
 export default class Level {
-  constructor(name) {
+  constructor(name, assetLoader) {
     this.name = name;
     this.background_name = LEVELS[name]['bg'];
 
     // Loading assets
-    this.tileset = new Tileset(TILES, TILES_INFO['tw'], TILES_INFO['th'], TILES_INFO['rows'], TILES_INFO['columns']);
-    this.background = new Background(BACKGROUNDS[this.background_name]['img']);
-    this.audio = audioSetupAndPlay(BACKGROUNDS[this.background_name]['audio'], 'game-canvas');
+    this.tileset = new Tileset(assetLoader.getAsset(TILES), TILES_INFO['tw'], TILES_INFO['th'], TILES_INFO['rows'], TILES_INFO['columns']);
+    this.background = new Background(assetLoader.getAsset(BACKGROUNDS[this.background_name]['img']));
+    this.audio = audioSetupAndPlay(assetLoader.getAsset(BACKGROUNDS[this.background_name]['audio']));
 
     // Configuring level
     this.width = LEVELS_INFO['w'];
@@ -32,7 +32,7 @@ export default class Level {
     this.boosters = [];
     this.static = [];
 
-    let levelObjs = decodeLevel(LEVELS[name]['obj']);
+    const levelObjs = decodeLevel(LEVELS[name]['obj']);
     for (let [index, objectId] of levelObjs.entries()) {
       if (objectId == 0) {
         continue;
