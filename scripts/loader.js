@@ -1,5 +1,8 @@
 import { LEVELS, BACKGROUNDS, TILES } from '/scripts/assets.js';
 
+const ASSET_TYPE_IMG = Symbol.for('game/asset/types/img');
+const ASSET_TYPE_AUDIO = Symbol.for('game/asset/types/audio');
+
 export default class AssetLoader {
   constructor() {
     this.assetLoaded = 0;
@@ -9,34 +12,33 @@ export default class AssetLoader {
     /* Fill asset map. Need to load: tileset, backgrounds (img + audio), levels (placeholders) */
 
     // Tileset
-    ++this.assetCount;
-    this.assets[TILES] = {
-      type: 'img', loaded: false
-    };
+    this.registerAsset(TILES, ASSET_TYPE_IMG);
     // Level placeholders
     for (const [_levelname, levelinfo] of Object.entries(LEVELS)) {
-      this.assets[levelinfo['placeholder_img']] = {
-        type: 'img', loaded: false
-      };
-      ++this.assetCount;
+      this.registerAsset(levelinfo['placeholder_img'], ASSET_TYPE_IMG);
     }
     // Background
     for (const [_bgname, bginfo] of Object.entries(BACKGROUNDS)) {
-      this.assets[bginfo['img']] = {
-        type: 'img', loaded: false
-      };
-      this.assets[bginfo['audio']] = {
-        type: 'audio', loaded: false
-      };
-      this.assetCount += 2;
+      this.registerAsset(bginfo['img'], ASSET_TYPE_IMG);
+      this.registerAsset(bginfo['audio'], ASSET_TYPE_AUDIO);
     }
+  }
+
+  registerAsset(path, type) {
+    if (path in this.assets) {
+      return;
+    }
+    this.assets[path] = {
+      type: type, loaded: false
+    }
+    ++this.assetCount;
   }
 
   loadAllAssets(gameInstance, currentBar) {
     this.checkoutAssetLoaded = this.checkoutAssetLoaded.bind(this, gameInstance, currentBar);
     for (const [path, asset] of Object.entries(this.assets)) {
       switch (asset.type) {
-        case 'img':
+        case ASSET_TYPE_IMG:
           asset.asset = new Image();
           asset.asset.onload = () => {
             console.log(path);
@@ -44,7 +46,7 @@ export default class AssetLoader {
           }
           asset.asset.src = path;
           break;
-        case 'audio':
+        case ASSET_TYPE_AUDIO:
           asset.asset = new Audio();
           asset.asset.oncanplaythrough = () => {
             console.log(path);
@@ -59,7 +61,8 @@ export default class AssetLoader {
     }
   }
 
-  checkoutAssetLoaded(gameInstance, currentBar) {
+  checkoutAssetLoaded(gameInstance, currentBar, assetName) {
+    this.assets[assetName].loaded = true;
     ++this.assetLoaded;
     console.log(this.assetLoaded, this.assetCount);
     // Update bar
