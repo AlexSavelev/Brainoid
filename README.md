@@ -171,3 +171,14 @@ python -m http.server 8000 --bind 127.0.0.1
 
 Автором работы приходится студент 1 курса МФТИ Савельев Александр. Проект сделан
 в рамках итоговой аттестации курса "Фронтенд. Продвинутый уровень".
+
+# Использованные ресурсы
+
+Всё аудио сопровождение заимствовано из интернета:
+
+- [a_BeautifulRuinSummerSalt](https://youtu.be/1REA8mQ2Cx8)
+- [a_BeautifulDays](https://youtu.be/qoM2gf0c31M)
+- [a_mainmenu](https://youtu.be/JeKSb6C8wiU)
+- [a_CoolMorning](https://youtu.be/hiNSu24BNGQ)
+- [a_HopeOfSpring](https://youtu.be/ycERIVE_SAY)
+- a_BoosterApply, a_CoinCollect из GeometryDash SubZero

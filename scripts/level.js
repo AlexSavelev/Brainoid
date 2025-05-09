@@ -3,12 +3,12 @@ import Background from '/scripts/background.js';
 import { CoinManager, BoosterManager } from '/scripts/interactive.js';
 import { Platform, Ball } from '/scripts/player.js';
 import { Progress, STATUS_KILLED } from '/scripts/progress.js';
-import { audioSetupAndPlay, audioStopAndDestroy } from '/scripts/audio.js';
+import { audioSetupAndPlay, audioStopAndDestroy, audioPlayOnce } from '/scripts/audio.js';
 
 import { inSegment, inAnySegment, decodeLevel, collidesBoxAndCircle, isNoTrivialColliding, collidesTwoSegmentsTracing, collidesSegmentAndBoxTracing, twoSegmentsIntersection } from '/scripts/misc.js';
 import Vector from '/scripts/vector.js';
 
-import { BACKGROUNDS, LEVELS, LEVELS_INFO, TILES, TILES_INFO } from '/scripts/assets.js';
+import { BACKGROUNDS, LEVELS, LEVELS_INFO, TILES, TILES_INFO, SFX } from '/scripts/assets.js';
 import { PLATFORM_PARAM_TO_ANGLE_COEFF, MAX_COLLIDING_RADIUS_RATIO, RAYS_PER_RAD, DEBUG_ENABLED, GAME_LIFES, BEFORE_PUSH_TIMEOUT } from '/scripts/constants.js';
 
 export default class Level {
@@ -20,6 +20,9 @@ export default class Level {
     this.tileset = new Tileset(assetLoader.getAsset(TILES), TILES_INFO['tw'], TILES_INFO['th'], TILES_INFO['rows'], TILES_INFO['columns']);
     this.background = new Background(assetLoader.getAsset(BACKGROUNDS[this.background_name]['img']));
     this.audio = audioSetupAndPlay(assetLoader.getAsset(BACKGROUNDS[this.background_name]['audio']));
+
+    this.sfxCoinCollect = assetLoader.getAsset(SFX['CoinCollect']);
+    this.sfxBoosterApply = assetLoader.getAsset(SFX['BoosterApply']);
 
     // Configuring level
     this.width = LEVELS_INFO['w'];
@@ -282,6 +285,7 @@ export default class Level {
         bx, by, collision['w'], collision['h'], MAX_COLLIDING_RADIUS_RATIO);
       if (isNoTrivialColliding(colliding)) {
         this.progress.collectCoin();
+        audioPlayOnce(this.sfxCoinCollect);
         coinsToRemove.push(i);
       }
     }
@@ -365,6 +369,7 @@ export default class Level {
 
   applyEffect(effect) {
     // EX: { name: 'b_plat_inc', value: BOOSTER_PLATFORM_MODIFIER }
+    audioPlayOnce(this.sfxBoosterApply);
     switch (effect.name) {
       case 'b_plat_inc':
         this.platform.modifySize(effect.value, true);

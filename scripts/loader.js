@@ -1,4 +1,4 @@
-import { LEVELS, BACKGROUNDS, TILES } from '/scripts/assets.js';
+import { LEVELS, BACKGROUNDS, TILES, SFX } from '/scripts/assets.js';
 
 const ASSET_TYPE_IMG = Symbol.for('game/asset/types/img');
 const ASSET_TYPE_AUDIO = Symbol.for('game/asset/types/audio');
@@ -9,7 +9,7 @@ export default class AssetLoader {
     this.assetCount = 0;
     this.assets = {};
 
-    /* Fill asset map. Need to load: tileset, backgrounds (img + audio), levels (placeholders) */
+    /* Fill asset map. Need to load: tileset, backgrounds (img + audio), levels (placeholders), sfx */
 
     // Tileset
     this.registerAsset(TILES, ASSET_TYPE_IMG);
@@ -22,16 +22,29 @@ export default class AssetLoader {
       this.registerAsset(bginfo['img'], ASSET_TYPE_IMG);
       this.registerAsset(bginfo['audio'], ASSET_TYPE_AUDIO);
     }
+    // SFX
+    for (const [_sfxname, audio] of Object.entries(SFX)) {
+      this.registerAsset(audio, ASSET_TYPE_AUDIO);
+    }
   }
 
   registerAsset(path, type) {
+    let volumeMod = null;
+    if (type == ASSET_TYPE_AUDIO) {
+      volumeMod = path['volume_mod'];
+      path = path['path'];
+    }
     if (path in this.assets) {
       return;
     }
     this.assets[path] = {
       type: type, loaded: false
-    }
+    };
     ++this.assetCount;
+    // Extra meta
+    if (type == ASSET_TYPE_AUDIO) {
+      this.assets[path].volumeMod = volumeMod;
+    }
   }
 
   loadAllAssets(gameInstance, currentBar) {
@@ -76,7 +89,16 @@ export default class AssetLoader {
   }
 
   getAsset(path) {
-    return this.assets[path].asset;
+    if (path.constructor == Object) {
+      path = path['path'];
+    }
+    const assetInfo = this.assets[path];
+    switch (assetInfo.type) {
+      case ASSET_TYPE_AUDIO:
+        return assetInfo;
+      default:
+        return assetInfo.asset;
+    }
   }
 
   getAssetBase64(path) {

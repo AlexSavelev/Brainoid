@@ -4,6 +4,7 @@ export default function getFullUISet() {
 
     loader: document.getElementById('loader'),
     loaderCurrentBar: document.getElementById('load-progress-current'),
+    btnLoaderStart: document.getElementById('btn-loader-start'),
 
     mainMenu: document.getElementById('main-menu'),
     btnSelectLevel: document.getElementById('btn-select-level'),

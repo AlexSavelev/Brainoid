@@ -1,24 +1,29 @@
 export const BACKGROUNDS = {
   '_mainmenu': {
     'img': '/assets/img/bg_sky.png', // TODO
-    'audio': '/assets/audio/a_mainmenu.ogg'
+    'audio': { 'path': '/assets/audio/a_mainmenu.ogg', 'volume_mod': 0.6 }
   },
   'sky': {
     'img': '/assets/img/bg_sky.png',
-    'audio': '/assets/audio/a_BeautifulDays.ogg'  // TODO: meta in README
+    'audio': { 'path': '/assets/audio/a_BeautifulDays.ogg', 'volume_mod': 0.5 }
   },
   'sunny': {
     'img': '/assets/img/bg_sunny.png',
-    'audio': '/assets/audio/a_HopeOfSpring.ogg'
+    'audio': { 'path': '/assets/audio/a_HopeOfSpring.ogg', 'volume_mod': 0.5 }
   },
   'winter': {
     'img': '/assets/img/bg_winter.png',
-    'audio': '/assets/audio/a_CoolMorning.ogg'
+    'audio': { 'path': '/assets/audio/a_CoolMorning.ogg', 'volume_mod': 0.5 }
   },
   'romantic': {
     'img': '/assets/img/bg_romantic.png',
-    'audio': '/assets/audio/a_BeautifulRuinSummerSalt.ogg'
+    'audio': { 'path': '/assets/audio/a_BeautifulRuinSummerSalt.ogg', 'volume_mod': 0.5 }
   }
+};
+
+export const SFX = {
+  'CoinCollect': { 'path': '/assets/audio/a_CoinCollect.ogg', 'volume_mod': 1.0 },
+  'BoosterApply': { 'path': '/assets/audio/a_BoosterApply.ogg', 'volume_mod': 1.0 }
 };
 
 export const TILES = '/assets/img/tileset_v4.png';

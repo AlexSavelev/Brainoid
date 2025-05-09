@@ -116,6 +116,8 @@ export default class GameInstance {
     // Custom hide
     this.setElemOpacity(this.uiset.victory, 0);
     this.setElemOpacity(this.uiset.gameOver, 0);
+    this.uiset.btnLoaderStart.disabled = true;
+    this.uiset.btnLoaderStart.classList.add('disabled-btn');
   }
 
   hideElem(elem) {
@@ -146,12 +148,13 @@ export default class GameInstance {
   }
 
   onAssetsLoaded() {
-    // Levels
+    // entrypoint after all asset loaded
     for (const level_id of Object.keys(LEVELS)) {
       this.addLevelToSelector(level_id);
     }
-    // entrypoint after all asset loaded
-    this.gotoMainMenu();
+    this.uiset.btnLoaderStart.addEventListener('click', this.gotoMainMenu);
+    this.uiset.btnLoaderStart.disabled = false;
+    this.uiset.btnLoaderStart.classList.remove('disabled-btn');
   }
 
   gotoMainMenu() {
@@ -254,11 +257,11 @@ export default class GameInstance {
   }
 
   update(deltaTime) {
+    // Updates need only while playing
     if (this.state === STATE_PLAYING) {
       this.updateGame(deltaTime);
       return;
     }
-    // TODO
   }
 
   render() {
@@ -307,7 +310,7 @@ export default class GameInstance {
 
   loadLevel(name) {
     this.level = new Level(name, this.assetLoader);
-    // TODO
+    // all other actions take place in the level
   }
 
   unloadLevel() {
