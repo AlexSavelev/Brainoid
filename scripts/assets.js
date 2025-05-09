@@ -1,4 +1,8 @@
 export const BACKGROUNDS = {
+  '_mainmenu': {
+    'img': '', // TODO
+    'audio': '/assets/audio/a_mainmenu.ogg'
+  },
   'sky': {
     'img': '/assets/img/bg_sky.png',
     'audio': '/assets/audio/a_BeautifulDays.ogg'  // TODO: meta in README

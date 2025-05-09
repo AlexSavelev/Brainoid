@@ -2,9 +2,10 @@ import Tileset from '/scripts/tileset.js';
 import Background from '/scripts/background.js';
 import { CoinManager, BoosterManager } from '/scripts/interactive.js';
 import { Platform, Ball } from '/scripts/player.js';
-import { Progress, STATUS_PLAYING, STATUS_KILLED, STATUS_DIED, STATUS_WON } from '/scripts/progress.js';
+import { Progress, STATUS_KILLED } from '/scripts/progress.js';
+import { audioSetupAndPlay, audioStopAndDestroy } from '/scripts/audio.js';
 
-import { inSegment, inAnySegment, decodeLevel, collidesBoxAndCircle, isNoTrivialColliding, collidesTwoSegmentsTracing, collidesSegmentAndBoxTracing, twoSegmentsIntersection, solve2Eq } from '/scripts/misc.js';
+import { inSegment, inAnySegment, decodeLevel, collidesBoxAndCircle, isNoTrivialColliding, collidesTwoSegmentsTracing, collidesSegmentAndBoxTracing, twoSegmentsIntersection } from '/scripts/misc.js';
 import Vector from '/scripts/vector.js';
 
 import { BACKGROUNDS, LEVELS, LEVELS_INFO, TILES, TILES_INFO } from '/scripts/assets.js';
@@ -18,7 +19,7 @@ export default class Level {
     // Loading assets
     this.tileset = new Tileset(TILES, TILES_INFO['tw'], TILES_INFO['th'], TILES_INFO['rows'], TILES_INFO['columns']);
     this.background = new Background(BACKGROUNDS[this.background_name]['img']);
-    this.setupBackgroundAudio();
+    this.audio = audioSetupAndPlay(BACKGROUNDS[this.background_name]['audio'], 'game-canvas');
 
     // Configuring level
     this.width = LEVELS_INFO['w'];
@@ -105,27 +106,14 @@ export default class Level {
     }
   }
 
-  setupBackgroundAudio() {
-    this.audio = new Audio(BACKGROUNDS[this.background_name]['audio']);
-    document.getElementById('game-canvas').appendChild(this.audio);
-    this.audio.addEventListener('canplaythrough', (event) => {
-      this.audio.loop = true;
-      this.audio.play();
-    });
-  }
-
-  stopBackgroundAudio() {
-    this.audio.remove();  // TODO: fade out
-  }
-
   destruct() {
-    this.stopBackgroundAudio();
+    audioStopAndDestroy(this.audio);
   }
 
   update(deltaTime) {
     this.push_timeout += deltaTime;
     // Coins
-    for (let coin of this.coins) {
+    for (const coin of this.coins) {
       this.coinManager.updateCoinFrame(coin, deltaTime);
     }
     // Player
@@ -149,12 +137,12 @@ export default class Level {
   }
 
   checkCollisions(start, to) {
-    var collisionCandidate = { t: 2 };  // like a: { t: 1, obj_type: 'static', obj_ind: 0, dxm: 1, dym: 1 }
+    let collisionCandidate = { t: 2 };  // like a: { t: 1, obj_type: 'static', obj_ind: 0, dxm: 1, dym: 1 }
     // Boosters
     for (let i = 0; i < this.boosters.length; ++i) {
-      var boxA = new Vector(this.boosters[i].aX, this.boosters[i].aY);
-      var boxSize = new Vector(this.tileset.width, this.tileset.height);
-      var tmp = collidesSegmentAndBoxTracing(start, to, boxA, boxSize);
+      const boxA = new Vector(this.boosters[i].aX, this.boosters[i].aY);
+      const boxSize = new Vector(this.tileset.width, this.tileset.height);
+      const tmp = collidesSegmentAndBoxTracing(start, to, boxA, boxSize);
       if (tmp.t < collisionCandidate.t) {
         collisionCandidate = { t: tmp.t, obj_type: 'booster', obj_ind: i, dxm: tmp.dxm, dym: tmp.dym };
       }
@@ -167,21 +155,21 @@ export default class Level {
       if (!this.static[i].collision) {
         continue;
       }
-      var boxA = new Vector(this.static[i].aX, this.static[i].aY);
-      var boxSize = new Vector(this.tileset.width, this.tileset.height);
-      var tmp = collidesSegmentAndBoxTracing(start, to, boxA, boxSize);
+      const boxA = new Vector(this.static[i].aX, this.static[i].aY);
+      const boxSize = new Vector(this.tileset.width, this.tileset.height);
+      const tmp = collidesSegmentAndBoxTracing(start, to, boxA, boxSize);
       if (tmp.t < collisionCandidate.t) {
         collisionCandidate = { t: tmp.t, obj_type: 'static', obj_ind: i, dxm: tmp.dxm, dym: tmp.dym };
       }
     }
     // Platform
     if (this.last_hit.obj_type != 'platform') {
-      var platA = new Vector(this.platform.aX, this.platform.aY);
-      var platB = platA.copy().add(this.platform.width, 0);
+      const platA = new Vector(this.platform.aX, this.platform.aY);
+      const platB = platA.copy().add(this.platform.width, 0);
       if (DEBUG_ENABLED) {
         this.d_plat.push(platA, platB);
       }
-      var tmp = twoSegmentsIntersection(start, to, platA, platB);
+      const tmp = twoSegmentsIntersection(start, to, platA, platB);
       if (inSegment(tmp.x, [0, 1]) && inSegment(tmp.y, [0, 1]) && tmp.x < collisionCandidate.t) {
         collisionCandidate = { t: tmp.x, obj_type: 'platform', obj_ind: 0, dxm: tmp.dxm, dym: tmp.dym, param: 2 * tmp.y - 1 };
       }
@@ -189,26 +177,26 @@ export default class Level {
     // Bounds
     // Up bound
     if (this.last_hit.obj_type != 'bound' || this.last_hit.bound_dir != 'up') {
-      var t_bound_up = collidesTwoSegmentsTracing(start, to, new Vector(0, 0), new Vector(this.width * this.tileset.width, 0));
+      const t_bound_up = collidesTwoSegmentsTracing(start, to, new Vector(0, 0), new Vector(this.width * this.tileset.width, 0));
       if (t_bound_up < collisionCandidate.t) {
         collisionCandidate = { t: t_bound_up, obj_type: 'bound', obj_ind: 0, dxm: 1, dym: -1, bound_dir: 'up' };
       }
     }
     // Left/right
     if (this.last_hit.obj_type != 'bound' || this.last_hit.bound_dir != 'left') {
-      var t_bound_left = collidesTwoSegmentsTracing(start, to, new Vector(0, 0), new Vector(0, this.height * this.tileset.height));
+      const t_bound_left = collidesTwoSegmentsTracing(start, to, new Vector(0, 0), new Vector(0, this.height * this.tileset.height));
       if (t_bound_left < collisionCandidate.t) {
         collisionCandidate = { t: t_bound_left, obj_type: 'bound', obj_ind: 0, dxm: -1, dym: 1, bound_dir: 'left' };
       }
     }
     if (this.last_hit.obj_type != 'bound' || this.last_hit.bound_dir != 'right') {
-      var t_bound_right = collidesTwoSegmentsTracing(start, to, new Vector(this.width * this.tileset.width, 0), new Vector(this.width * this.tileset.width, this.height * this.tileset.height));
+      const t_bound_right = collidesTwoSegmentsTracing(start, to, new Vector(this.width * this.tileset.width, 0), new Vector(this.width * this.tileset.width, this.height * this.tileset.height));
       if (t_bound_right < collisionCandidate.t) {
         collisionCandidate = { t: t_bound_right, obj_type: 'bound', obj_ind: 0, dxm: -1, dym: 1, bound_dir: 'right' };
       }
     }
     // Down
-    var tmp = collidesTwoSegmentsTracing(start, to, new Vector(0, (this.height + 1) * this.tileset.height), new Vector(this.width * this.tileset.width, (this.height + 1) * this.tileset.height));
+    const tmp = collidesTwoSegmentsTracing(start, to, new Vector(0, (this.height + 1) * this.tileset.height), new Vector(this.width * this.tileset.width, (this.height + 1) * this.tileset.height));
     if (tmp < collisionCandidate.t) {
       collisionCandidate = { t: tmp, obj_type: 'kill_bound', obj_ind: 0, dxm: 0, dym: 0 };
     }
@@ -224,22 +212,22 @@ export default class Level {
     }
 
     // trajectory
-    let center = new Vector(this.ball.aX, this.ball.aY).add(this.ball.radius, this.ball.radius);
-    let ds = new Vector(this.ball.dx * deltaTime, this.ball.dy * deltaTime);
+    const center = new Vector(this.ball.aX, this.ball.aY).add(this.ball.radius, this.ball.radius);
+    const ds = new Vector(this.ball.dx * deltaTime, this.ball.dy * deltaTime);
     let collisionCandidate = { t: 2 };
     // Checkout start
     for (let i = -RAYS_PER_RAD; i <= RAYS_PER_RAD; ++i) {
-      let dv = ds.copy().normalize(this.ball.radius);
+      const dv = ds.copy().normalize(this.ball.radius);
       dv.rotate((i * Math.PI / 2 / RAYS_PER_RAD) || 0);
-      let newStart = center.copy().add(dv);
-      let newTarget = newStart.copy().add(ds);
+      const newStart = center.copy().add(dv);
+      const newTarget = newStart.copy().add(ds);
 
       if (DEBUG_ENABLED) {
         this.d_start.push(newStart);
         this.d_to.push(newTarget);
       }
 
-      let newCand = this.checkCollisions(newStart, newTarget);
+      const newCand = this.checkCollisions(newStart, newTarget);
       if (newCand.t < collisionCandidate.t) {
         collisionCandidate = newCand;
       }
@@ -284,7 +272,7 @@ export default class Level {
   }
 
   checkoutCoins() {
-    let coinsToRemove = [];
+    const coinsToRemove = [];
     for (let i = 0; i < this.coins.length; ++i) {
       const collision = this.coins[i].collision;
       const bx = this.coins[i].aX + collision['dx'];
@@ -297,7 +285,7 @@ export default class Level {
         coinsToRemove.push(i);
       }
     }
-    let coinsToRemoveLen = coinsToRemove.length;
+    const coinsToRemoveLen = coinsToRemove.length;
     for (let i = 0; i < coinsToRemoveLen; ++i) {
       this.coins.splice(coinsToRemove[i] - i, 1);
     }

@@ -34,12 +34,24 @@ function getLeaderboardID(levelname) {
 
 export class LeaderboardManager {
   constructor() {
+    this.enable_kv_db = false;
+    fetch('/config.json')
+      .then(response => response.json())
+      .then(data => this.enable_kv_db = data.enable_kv_database);
+
     this.allLeaderboardRecords = null;
     this.currentSortOption = {};
   }
 
+  get db_enabled() {
+    return this.enable_kv_db;
+  }
+
   saveUserResults(username, levelname, time) {
-    fetch('https://brainoid.deno.dev/api/records', {
+    if (!this.enable_kv_db) {
+      return;
+    }
+    fetch('/api/records', {
       method: 'PUT',
       body: JSON.stringify({
         level: levelname,
@@ -54,7 +66,7 @@ export class LeaderboardManager {
 
   getSortOption(levelname) {
     if (!(levelname in this.currentSortOption)) {
-      this.currentSortOption[levelname] = { 'key': 'time', 'order_mod': 1 };
+      this.currentSortOption[levelname] = { 'key': 'time', 'order_mod': 1, 'cnt': 5 };
     }
     return this.currentSortOption[levelname];
   }
@@ -73,8 +85,14 @@ export class LeaderboardManager {
   updateLeaderboard(container) {
     // clear
     container.innerHTML = '';
+    // check
+    if (!this.enable_kv_db) {
+      this.allLeaderboardRecords = {};
+      this.updateAllLeaderboards(container);
+      return;
+    }
     // receive & update
-    fetch("https://brainoid.deno.dev/api/records")
+    fetch("/api/records")
       .then(response => response.json())
       .then(jsonRecords => {
         this.allLeaderboardRecords = {};
@@ -89,13 +107,28 @@ export class LeaderboardManager {
   }
 
   updateAllLeaderboards(container) {
+    let leaderboardsWritten = 0;
     for (const [levelname, records] of Object.entries(this.allLeaderboardRecords)) {
       const leaderboardDiv = this.createLeaderboard(container, levelname, records);
       container.appendChild(leaderboardDiv);
+      leaderboardsWritten += 1;
+    }
+    if (leaderboardsWritten == 0) {
+      this.emptyDBMessage(container);
     }
   }
 
-  createLeaderboard(container, levelname, records, sortOption = { 'key': 'time', 'order_mod': 1 }) {
+  emptyDBMessage(container) {
+    const leaderboardDiv = document.createElement('div');
+    leaderboardDiv.classList.add('leaderboard');
+
+    const heading = document.createElement('h2');
+    heading.textContent = 'Здесь пока ничего нет';
+    leaderboardDiv.appendChild(heading);
+    container.appendChild(leaderboardDiv);
+  }
+
+  createLeaderboard(container, levelname, records, sortOption = { 'key': 'time', 'order_mod': 1, 'cnt': 5 }) {
     // Sort
     this.currentSortOption[levelname] = sortOption;
     this.sortByOption(levelname);
@@ -133,7 +166,7 @@ export class LeaderboardManager {
 
     // select rows
     const rowCountSelect = document.createElement('select');
-    const rowOptions = [5, 10, 20, 'All'];
+    const rowOptions = [5, 10, 20, 50, 100, 'All'];
     rowOptions.forEach(optionValue => {
       const option = document.createElement('option');
       option.value = optionValue;
@@ -141,21 +174,25 @@ export class LeaderboardManager {
       rowCountSelect.appendChild(option);
     });
 
+    rowCountSelect.value = (sortOption['cnt'] == records.length ? 'All' : sortOption['cnt']);
+
     rowCountSelect.addEventListener('change', (event) => {
       const selectedValue = event.target.value;
       const rowsToShow = selectedValue === 'All' ? records.length : parseInt(selectedValue);
-      this.populateTable(tbody, records, rowsToShow);
+      this.currentSortOption[levelname]['cnt'] = rowsToShow;
+      this.populateTable(tbody, levelname, records);
     });
 
     leaderboardDiv.appendChild(rowCountSelect);
 
     // First table populating
-    this.populateTable(tbody, records);
+    this.populateTable(tbody, levelname, records);
 
     return leaderboardDiv;
   }
 
-  populateTable(tbody, records, rowsToShow = 5) {
+  populateTable(tbody, levelname, records) {
+    const rowsToShow = this.currentSortOption[levelname]['cnt'];
     tbody.innerHTML = '';
 
     for (let i = 0; i < Math.min(rowsToShow, records.length); i++) {
@@ -174,7 +211,7 @@ export class LeaderboardManager {
 
   findLeaderboardByLevelname(levelname) {
     const leaderboards = document.querySelectorAll(`.leaderboard`);
-    for (let leaderboard of leaderboards) {
+    for (const leaderboard of leaderboards) {
       if (leaderboard.id == getLeaderboardID(levelname)) {
         return leaderboard;
       }
@@ -183,15 +220,15 @@ export class LeaderboardManager {
 
   sortTable(container, levelname, column) {
     const currentOption = this.getSortOption(levelname);
-    const key = column;
 
     const new_option = {
       'key': column,
-      'order_mod': (column == currentOption['key'] ? -1 * currentOption['order_mod'] : 1)
+      'order_mod': (column == currentOption['key'] ? -1 * currentOption['order_mod'] : 1),
+      'cnt': currentOption['cnt']
     };
 
     // Find & replace
-    let existingLeaderboard = this.findLeaderboardByLevelname(levelname);
+    const existingLeaderboard = this.findLeaderboardByLevelname(levelname);
     if (existingLeaderboard) {
       const newLeaderboard = this.createLeaderboard(container, levelname, this.allLeaderboardRecords[levelname], new_option);
       container.replaceChild(newLeaderboard, existingLeaderboard);

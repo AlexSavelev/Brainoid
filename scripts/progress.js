@@ -1,3 +1,5 @@
+import { WIN_ON_ONE_COIN } from '/scripts/constants.js';
+
 export const STATUS_PLAYING = Symbol.for('game/play/playing');
 export const STATUS_KILLED = Symbol.for('game/play/killed');
 export const STATUS_DIED = Symbol.for('game/play/died');
@@ -37,6 +39,13 @@ export class Progress {
   }
 
   collectCoin() {
+    // Debugging
+    if (WIN_ON_ONE_COIN) {
+      this.coins_collected = this.coins_total;
+      this.status = STATUS_WON;
+      return;
+    }
+
     this.coins_collected += 1;
     if (this.coins_collected == this.coins_total) {
       this.status = STATUS_WON;

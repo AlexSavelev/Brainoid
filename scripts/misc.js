@@ -61,7 +61,7 @@ export function getSegmentAndCircleIntersectionParameter(rx, ry, rr, p1x, p1y, p
   const b = 2 * (napX * rvX + napY * rvY);
   const c = (rvX * rvX + rvY * rvY) - rr * rr;
 
-  var discriminant = b * b - 4 * a * c;
+  let discriminant = b * b - 4 * a * c;
   if (discriminant < 0) {
     return null;
   }
@@ -119,7 +119,7 @@ export function solve2Eq(e1, e2, rec_d = 1) {
     return solve2Eq(e2, e1, rec_d + 1);
   }
   if (!isNearZero(e1.a) && !isNearZero(e2.a)) {
-    var t = e2.a / e1.a;
+    let t = e2.a / e1.a;
     return solve2Eq(e1, { a: e2.a - t * e1.a, b: e2.b - t * e1.b, c: e2.c - t * e1.c }, rec_d + 1);
   }
   // e1.a != 0, e2.a == 0
@@ -127,7 +127,7 @@ export function solve2Eq(e1, e2, rec_d = 1) {
     return { x: null, y: null };
   }
   if (!isNearZero(e1.b)) {
-    var t = e1.b / e2.b;
+    let t = e1.b / e2.b;
     return solve2Eq({ a: e1.a - t * e2.a, b: e1.b - t * e2.b, c: e1.c - t * e2.c }, e2, rec_d + 1);
   }
   // ax+c, by+c
@@ -152,16 +152,16 @@ export function collidesTwoSegmentsTracing(traceStart, traceEnd, segA, segB) {
 
 export function collidesSegmentAndBoxTracing(traceStart, traceEnd, boxA, boxSize) {
   // HOR
-  var hor_up = collidesTwoSegmentsTracing(traceStart, traceEnd, boxA.copy().add(COLLISION_SEGMENT_PADDING, 0), boxA.copy().add(boxSize.x - COLLISION_SEGMENT_PADDING, 0));
-  var hor_down = collidesTwoSegmentsTracing(traceStart, traceEnd, boxA.copy().add(COLLISION_SEGMENT_PADDING, boxSize.y), boxA.copy().add(boxSize.x - COLLISION_SEGMENT_PADDING, boxSize.y));
+  let hor_up = collidesTwoSegmentsTracing(traceStart, traceEnd, boxA.copy().add(COLLISION_SEGMENT_PADDING, 0), boxA.copy().add(boxSize.x - COLLISION_SEGMENT_PADDING, 0));
+  let hor_down = collidesTwoSegmentsTracing(traceStart, traceEnd, boxA.copy().add(COLLISION_SEGMENT_PADDING, boxSize.y), boxA.copy().add(boxSize.x - COLLISION_SEGMENT_PADDING, boxSize.y));
 
-  var hor_cand = Math.min(hor_up, hor_down);
+  let hor_cand = Math.min(hor_up, hor_down);
 
   // VER
-  var ver_left = collidesTwoSegmentsTracing(traceStart, traceEnd, boxA.copy().add(COLLISION_SEGMENT_PADDING, 0), boxA.copy().add(COLLISION_SEGMENT_PADDING, boxSize.y));
-  var ver_right = collidesTwoSegmentsTracing(traceStart, traceEnd, boxA.copy().add(boxSize.x - COLLISION_SEGMENT_PADDING, 0), boxA.copy().add(boxSize.x - COLLISION_SEGMENT_PADDING, boxSize.y));
+  let ver_left = collidesTwoSegmentsTracing(traceStart, traceEnd, boxA.copy().add(COLLISION_SEGMENT_PADDING, 0), boxA.copy().add(COLLISION_SEGMENT_PADDING, boxSize.y));
+  let ver_right = collidesTwoSegmentsTracing(traceStart, traceEnd, boxA.copy().add(boxSize.x - COLLISION_SEGMENT_PADDING, 0), boxA.copy().add(boxSize.x - COLLISION_SEGMENT_PADDING, boxSize.y));
 
-  var ver_cand = Math.min(ver_left, ver_right);
+  let ver_cand = Math.min(ver_left, ver_right);
 
   // Ret
   if (hor_cand < ver_cand) {

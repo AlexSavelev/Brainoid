@@ -10,8 +10,8 @@ export default class Vector {
   }
 
   lengthSq() {
-    var x = this.x;
-    var y = this.y;
+    let x = this.x;
+    let y = this.y;
     return x * x + y * y;
   }
 
@@ -58,13 +58,13 @@ export default class Vector {
   }
 
   headingRads() {
-    var h = Math.atan2(this.y, this.x);
+    let h = Math.atan2(this.y, this.x);
     return h;
   };
 
   rotate(rad) {
-    var newHead = this.headingRads() + rad;
-    var len = this.length();
+    let newHead = this.headingRads() + rad;
+    let len = this.length();
     this.x = Math.cos(newHead) * len;
     this.y = Math.sin(newHead) * len;
     return this;
@@ -79,12 +79,12 @@ export default class Vector {
   }
 
   dist(v) {
-    var d = v.copy().sub(this);
+    let d = v.copy().sub(this);
     return d.length();
   }
 
   equals(x, y) {
-    var a, b;
+    let a, b;
     if (x instanceof Vector) {
       a = x.x || 0;
       b = x.y || 0;

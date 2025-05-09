@@ -1,7 +1,8 @@
 import Level from '/scripts/level.js';
 import { LeaderboardManager, isValidName } from '/scripts/leaderboard.js';
+import { audioSetupAndPlay, audioStopAndDestroy } from '/scripts/audio.js';
 
-import { LEVELS } from '/scripts/assets.js';
+import { LEVELS, BACKGROUNDS } from '/scripts/assets.js';
 import { RENDER_FLUSH_INTERVAL, RENDER_MODIFIER, RENDER_OPTIONS } from '/scripts/constants.js';
 import { STATUS_DIED, STATUS_WON } from '/scripts/progress.js';
 
@@ -102,7 +103,7 @@ export default class GameInstance {
   }
 
   hideAll() {
-    for (var elem of
+    for (const elem of
       [
         this.uiset.mainMenu, this.uiset.about,
         this.uiset.leaderboard, this.uiset.selectLevel,
@@ -137,6 +138,9 @@ export default class GameInstance {
   /* ===== GOTO ===== */
 
   gotoMainMenu() {
+    if (this.state == STATE_PENDING || this.state == STATE_GAMERESULTS) {
+      this.mmAudio = audioSetupAndPlay(BACKGROUNDS['_mainmenu']['audio'], 'main-menu');
+    }
     this.state = STATE_MAINMENU;
     this.hideAll();
     this.showElem(this.uiset.mainMenu);
@@ -162,6 +166,7 @@ export default class GameInstance {
   }
 
   gotoGame() {
+    audioStopAndDestroy(this.mmAudio);
     this.state = STATE_PLAYING;
     this.hideAll();
     this.showElem(this.uiset.hud);
@@ -261,7 +266,7 @@ export default class GameInstance {
   updateGame(deltaTime) {
     this.level.update(deltaTime);
     // Checkout status
-    var status = this.level.progress.status;
+    let status = this.level.progress.status;
     if (status == STATUS_WON) {
       this.gotoGameResults(RESULT_VICTORY);
     } else if (status == STATUS_DIED) {
@@ -310,8 +315,15 @@ export default class GameInstance {
   // RESULTS
 
   bindSaveResult() {
-    this.boundSaveResult = this.saveResultAndExit.bind(this, this.level.name, this.level.progress.timeEllapsedSeconds);
-    this.uiset.btnVictorySave.addEventListener('click', this.boundSaveResult);
+    if (this.leaderboardManager.db_enabled) {
+      this.boundSaveResult = this.saveResultAndExit.bind(this, this.level.name, this.level.progress.timeEllapsedSeconds);
+      this.uiset.btnVictorySave.addEventListener('click', this.boundSaveResult);
+      this.uiset.btnVictorySave.disabled = false;
+      this.uiset.btnVictorySave.classList.remove('disabled-btn');
+    } else {
+      this.uiset.btnVictorySave.disabled = true;
+      this.uiset.btnVictorySave.classList.add('disabled-btn');
+    }
   }
 
   unbindSaveResult() {

@@ -63,6 +63,13 @@ footer {
   margin-top: auto;
 }
 
+.disabled-btn {
+  opacity: 0.5;
+  -moz-opacity: 0.5;
+  filter:alpha(opacity=50);
+  cursor: not-allowed !important;
+}
+
 button {
   padding: 10px 20px;
   margin: 10px;

@@ -25,7 +25,7 @@ export class Platform {
   }
 
   update(deltaTime) {
-    var timeToDest = Math.abs(this.xDest - this.aX) / this.speed;
+    let timeToDest = Math.abs(this.xDest - this.aX) / this.speed;
     if (timeToDest <= deltaTime) {
       this.aX = this.xDest;
       return;
