@@ -112,6 +112,28 @@ async function handler(request: Request): Promise<Response> {
     });
   }
 
+  if (pathname.startsWith('./api/records') && request.method == 'DELETE') {
+    const body = await request.json();
+
+    if (!body.username) {
+      return new Response("Missing request body", { status: 400 });
+    }
+
+    const keys = kv.list({ prefix: ['records'] });
+
+    for await (const entry of keys) {
+      if (entry.value.username == body.username) {
+        await kv.delete(entry.key);
+      }
+    }
+    
+    kv.close();
+
+    return new Response(JSON.stringify({}), {
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   try {
     const file = await Deno.readFile(pathname);
 

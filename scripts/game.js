@@ -365,7 +365,7 @@ export default class GameInstance {
     let validationVerdict = { ok: true };
     do {
       username = prompt((validationVerdict.ok ? '' : validationVerdict.mes + ' ') + 'Введите ваше имя');
-      if (!(username instanceof String)) {
+      if (username === null) {
         // User pressed 'cancel' button
         this.gotoMainMenuFromGameResults();
         return;

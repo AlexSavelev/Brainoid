@@ -1,6 +1,5 @@
 export const BACKGROUNDS = {
   '_mainmenu': {
-    'img': '/assets/img/bg_sky.png', // TODO
     'audio': { 'path': '/assets/audio/a_mainmenu.ogg', 'volume_mod': 0.6 }
   },
   'sky': {
@@ -99,7 +98,7 @@ export const LEVELS = {
     'active': false,
     'name': 'Матанализ',
     'description': 'В разработке...',
-    'placeholder_img': '/assets/img/ph_1.png', // TODO
+    'placeholder_img': '/assets/img/ph_1.png',
     'bg': 'sky',
     'obj': []
   }

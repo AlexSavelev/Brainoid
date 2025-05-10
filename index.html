@@ -85,24 +85,33 @@
     </div>
 
     <div id="hud" class="overlay prior">
-      <div id="hud-placeholder">
-        <div class="hud-item" style="flex-basis: 140px;">
-          <p>Время: </p>
-          <span id="gcnt__time">N/A</span>
-        </div>
-        <div class="hud-item">
-          <p>Жизней: </p>
-          <span id="gcnt__life">N/A</span>
-        </div>
-        <div class="hud-item">
-          <p>Монет: </p>
-          <span id="gcnt__coins">N/A</span>
-        </div>
-        <div class="hud-item">
-          <p>Бонусы: </p>
-          <span id="gcnt__boosters">N/A</span>
-        </div>
-      </div>
+      <table id="hud-placeholder">
+        <tbody>
+          <tr>
+            <td>Время</td>
+            <td><span id="gcnt__time">N/A</span></td>
+          </tr>
+          <tr>
+            <td>Жизней</td>
+            <td><span id="gcnt__life">N/A</span></td>
+          </tr>
+          <tr>
+            <td>Монет</td>
+            <td><span id="gcnt__coins">N/A</span></td>
+          </tr>
+          <tr>
+            <td>Бонусы</td>
+            <td><span id="gcnt__boosters">N/A</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- <div id="hud-placeholder">
+        <div class="hud-item">Время: <span id="gcnt__time">N/A</span></div>
+        <div class="hud-item">Жизней: <span id="gcnt__life">N/A</span></div>
+        <div class="hud-item">Монет: <span id="gcnt__coins">N/A</span></div>
+        <div class="hud-item">Бонусы: <span id="gcnt__boosters">N/A</span></div>
+      </div> -->
     </div>
 
     <div id="victory-screen" class="overlay prior game-results">

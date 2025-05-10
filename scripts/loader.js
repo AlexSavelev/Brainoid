@@ -19,8 +19,12 @@ export default class AssetLoader {
     }
     // Background
     for (const [_bgname, bginfo] of Object.entries(BACKGROUNDS)) {
-      this.registerAsset(bginfo['img'], ASSET_TYPE_IMG);
-      this.registerAsset(bginfo['audio'], ASSET_TYPE_AUDIO);
+      if ('img' in bginfo) {
+        this.registerAsset(bginfo['img'], ASSET_TYPE_IMG);
+      }
+      if ('audio' in bginfo) {
+        this.registerAsset(bginfo['audio'], ASSET_TYPE_AUDIO);
+      }
     }
     // SFX
     for (const [_sfxname, audio] of Object.entries(SFX)) {
