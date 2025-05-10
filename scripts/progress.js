@@ -61,6 +61,6 @@ export class Progress {
   }
 
   get timeEllapsedContext() {
-    return `${this.timeEllapsedSeconds} секунд`;
+    return `${this.timeEllapsedSeconds} сек.`;
   }
 };

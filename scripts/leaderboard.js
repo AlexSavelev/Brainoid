@@ -190,8 +190,7 @@ export class LeaderboardManager {
 
     rowCountSelect.addEventListener('change', (event) => {
       const selectedValue = event.target.value;
-      const rowsToShow = selectedValue === 'All' ? records.length : parseInt(selectedValue);
-      this.currentSortOption[levelname]['cnt'] = rowsToShow;
+      this.currentSortOption[levelname]['cnt'] = selectedValue;
       this.populateTable(tbody, levelname, records);
     });
 
@@ -205,7 +204,8 @@ export class LeaderboardManager {
   }
 
   populateTable(tbody, levelname, records) {
-    const rowsToShow = this.currentSortOption[levelname]['cnt'];
+    let rowsToShow = this.currentSortOption[levelname]['cnt'];
+    rowsToShow = rowsToShow === 'All' ? records.length : parseInt(rowsToShow);
     tbody.innerHTML = '';
 
     for (let i = 0; i < Math.min(rowsToShow, records.length); i++) {
