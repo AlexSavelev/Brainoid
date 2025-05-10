@@ -44,6 +44,7 @@ export default class GameInstance {
   /* ===== UI ===== */
 
   addLevelToSelector(level_id) {
+    const level_active = LEVELS[level_id]['active'];
     const level_name = LEVELS[level_id]['name'];
     const level_desc = LEVELS[level_id]['description'];
     const level_placeholder = this.assetLoader.getAssetBase64(LEVELS[level_id]['placeholder_img']);
@@ -56,9 +57,13 @@ export default class GameInstance {
         <p>${level_desc}</p>
     `;
 
-    levelItem.addEventListener('click', () => {
-      this.playLevel(level_id);
-    });
+    if (level_active) {
+      levelItem.addEventListener('click', () => {
+        this.playLevel(level_id);
+      });
+    } else {
+      levelItem.classList.add('level-item-locked');
+    }
 
     this.uiset.levelList.appendChild(levelItem);
     return levelItem;
@@ -143,7 +148,7 @@ export default class GameInstance {
   gotoLoadState() {
     this.state = STATE_PENDING;
     this.hideAll();
-    this.showElem(this.uiset.loader);
+    this.showElemFlex(this.uiset.loader);
     this.assetLoader.loadAllAssets(this, this.uiset.loaderCurrentBar);
   }
 
@@ -163,13 +168,13 @@ export default class GameInstance {
     }
     this.state = STATE_MAINMENU;
     this.hideAll();
-    this.showElem(this.uiset.mainMenu);
+    this.showElemFlex(this.uiset.mainMenu);
   }
 
   gotoSelectLevel() {
     this.state = STATE_SELECT_LEVEL;
     this.hideAll();
-    this.showElem(this.uiset.selectLevel);
+    this.showElemFlex(this.uiset.selectLevel);
   }
 
   gotoAbout() {
@@ -360,6 +365,11 @@ export default class GameInstance {
     let validationVerdict = { ok: true };
     do {
       username = prompt((validationVerdict.ok ? '' : validationVerdict.mes + ' ') + 'Введите ваше имя');
+      if (!(username instanceof String)) {
+        // User pressed 'cancel' button
+        this.gotoMainMenuFromGameResults();
+        return;
+      }
       validationVerdict = isValidName(username);
     } while (!validationVerdict.ok);
     this.leaderboardManager.saveUserResults(username, levelname, duration, timestamp);

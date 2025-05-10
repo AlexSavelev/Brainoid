@@ -13,30 +13,33 @@
   <header>
     <h2>Brainoid Game</h1>
       <nav>
-        <a href="https://github.com/AlexSavelev/Brainoid">GitHub</a>
+        <a href="https://github.com/AlexSavelev/Brainoid" target="_blank">GitHub</a>
       </nav>
   </header>
 
   <main>
     <div id="loader" class="majorscreen overlay">
+      <h3>Загрузка</h2>
       <div id="load-progress-bar">
         <div id="load-progress-current">N/A</div>
       </div>
-      <button id="btn-loader-start">Стартуем!</button>
+      <button id="btn-loader-start"><b>Стартуем!</b></button>
     </div>
 
     <canvas id="game-canvas" class="majorscreen overlay"></canvas>
 
     <!-- Main menu -->
     <div id="main-menu" class="majorscreen overlay">
-      <h1>Brainoid</h1>
-      <button id="btn-select-level">Играть</button>
-      <button id="btn-leaderboard">Таблица лидеров</button>
-      <button id="btn-about">Инфо</button>
+        <h1>Brainoid</h1>
+        <button id="btn-select-level">Выбрать уровень</button>
+        <button id="btn-leaderboard">Таблица лидеров</button>
+        <button id="btn-about">Об игре</button>
     </div>
 
     <div id="about" class="majorscreen overlay scrollable">
-      <button id="btn-about-back">Назад в Главное Меню</button>
+      <div class="flex-left">
+        <button id="btn-about-back">Назад в Главное Меню</button>
+      </div>
       <h2>История</h2>
       <p>Профессор Мяуриций, гений в области кото-науки, всегда мечтал о простом способе
         транспортировки ценностей. Его последнее изобретение, "Монетопорт", должно
@@ -54,45 +57,70 @@
         управляя платформой и направляя кота, чтобы он вернул все монеты и исправил свою
         ошибку!</p>
       <h2>Про автора</h2>
-      <p>Автором работы приходится студент 1 курса МФТИ Савельев Александр. Проект сделан
-        в рамках итоговой аттестации курса "Фронтенд. Продвинутый уровень".</p>
-      <a href="t.me/alexsavelev">Telegram</a>
-      <img src="/assets/img/author.jpg" alt="Фотка автора"/>
+      <div class="about-with-image">
+        <img src="/assets/img/author.jpg" alt="Фотка автора"/>
+        <div>
+          <p>Автором работы приходится студент 1 курса МФТИ TODO. Проект сделан
+            в рамках итоговой аттестации курса "TODO. Продвинутый уровень".</p>
+          <p>→ <a href="https://t.me/TODO" target="_blank">Telegram</a></p>
+        </div>
+      </div>
     </div>
 
     <div id="leaderboard-screen" class="majorscreen overlay scrollable">
-      <button id="btn-leaderboard-back">Назад в Главное Меню</button>
+      <div class="flex-left">
+        <button id="btn-leaderboard-back">Назад в Главное Меню</button>
+      </div>
       <div id="leaderboard-container"></div>
     </div>
 
     <div id="select-level" class="majorscreen overlay scrollable">
-      <button id="btn-select-back">Назад в Главное Меню</button>
+      <div class="flex-left">
+        <button id="btn-select-back" class="btn-red">Назад в Главное Меню</button>
+      </div>
       <h2>Выберите Уровень</h2>
       <div id="level-list"></div>
     </div>
 
-    <!-- HUD -->
     <div id="hud" class="overlay prior">
-      Время: <span id="gcnt__time">N/A</span><br>
-      Жизней: <span id="gcnt__life">N/A</span><br>
-      Монет: <span id="gcnt__coins">N/A</span><br>
-      Применено бонусов: <span id="gcnt__boosters">N/A</span>
-    </div>
-
-    <div id="game-over-screen" class="overlay prior game-results">
-      <div class="content">
-        <h2>Игра окончена!</h2>
-        <p>Вы проиграли</p>
-        <button id="btn-game-over-back">В главное меню</button>
+      <div id="hud-placeholder">
+        <div class="hud-item">
+          <p>Время: </p>
+          <span id="gcnt__time">N/A</span>
+        </div>
+        <div class="hud-item">
+          <p>Жизней: </p>
+          <span id="gcnt__life">N/A</span>
+        </div>
+        <div class="hud-item">
+          <p>Монет: </p>
+          <span id="gcnt__coins">N/A</span>
+        </div>
+        <div class="hud-item">
+          <p>Бонусы: </p>
+          <span id="gcnt__boosters">N/A</span>
+        </div>
       </div>
     </div>
 
     <div id="victory-screen" class="overlay prior game-results">
-      <div class="content">
+      <div class="game-results-content">
         <h2>Поздравляем!</h2>
         <p>Победа вас настигла! Время: <span id="vicscreen__time">N/A</span></p>
-        <button id="btn-victory-save">Сохранить результат</button>
-        <button id="btn-victory-back">Выйти без сохранения</button>
+        <div class="button-row">
+          <button id="btn-victory-save">Сохранить результат</button>
+          <button id="btn-victory-back">Выйти без сохранения</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="game-over-screen" class="overlay prior game-results">
+      <div class="game-results-content">
+        <h2>Игра окончена!</h2>
+        <p>Вы проиграли</p>
+        <div class="button-row">
+          <button id="btn-game-over-back">В главное меню</button>
+        </div>
       </div>
     </div>
 

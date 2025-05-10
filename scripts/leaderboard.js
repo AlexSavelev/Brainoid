@@ -131,7 +131,7 @@ export class LeaderboardManager {
     const leaderboardDiv = document.createElement('div');
     leaderboardDiv.classList.add('leaderboard');
 
-    const heading = document.createElement('h2');
+    const heading = document.createElement('h3');
     heading.textContent = 'Здесь пока ничего нет';
     leaderboardDiv.appendChild(heading);
     container.appendChild(leaderboardDiv);
@@ -148,7 +148,7 @@ export class LeaderboardManager {
     leaderboardDiv.classList.add('leaderboard');
 
     // heading
-    const heading = document.createElement('h2');
+    const heading = document.createElement('h3');
     heading.textContent = getLevelDisplayName(levelname);
     leaderboardDiv.appendChild(heading);
 
@@ -174,6 +174,9 @@ export class LeaderboardManager {
     leaderboardDiv.appendChild(table);
 
     // select rows
+    const selectLabel = document.createElement('label');
+    selectLabel.innerHTML = 'Количество строк: ';
+
     const rowCountSelect = document.createElement('select');
     const rowOptions = [5, 10, 20, 50, 100, 'All'];
     rowOptions.forEach(optionValue => {
@@ -192,6 +195,7 @@ export class LeaderboardManager {
       this.populateTable(tbody, levelname, records);
     });
 
+    leaderboardDiv.appendChild(selectLabel);
     leaderboardDiv.appendChild(rowCountSelect);
 
     // First table populating

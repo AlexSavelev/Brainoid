@@ -1,6 +1,6 @@
 // Debugging
 export const DEBUG_ENABLED = false;
-export const WIN_ON_ONE_COIN = false;
+export const WIN_ON_ONE_COIN = true;
 
 // Render
 export const RENDER_FLUSH_INTERVAL = 1;
@@ -21,7 +21,7 @@ export const COLLISION_SEGMENT_PADDING = 1;  // in absolute units
 export const RAYS_PER_RAD = 10;
 
 // Game process
-export const GAME_LIFES = 5;
+export const GAME_LIFES = 1;
 export const PLATFORM_DEFAULT_COLOR = '#FFFFFF';
 export const PLATFORM_DEFAULT_SIZE = 2;  // in blocks
 export const PLATFORM_DEFAULT_HEIGHT = 0.4;
