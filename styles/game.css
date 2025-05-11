@@ -421,6 +421,8 @@ canvas {
 /* About */
 
 #about {
+  display: none;
+
   padding: 0;
 }
 
