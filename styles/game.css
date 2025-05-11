@@ -387,6 +387,8 @@ canvas {
   color: #eee;
   font-family: sans-serif;
   font-size: 18px;
+
+  display: none;
 }
 
 #hud-placeholder {
