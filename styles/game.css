@@ -237,6 +237,10 @@ canvas {
 
 /* Leaderboards */
 
+#leaderboard-screen {
+  display: none;
+}
+
 #leaderboard-container {
   display: flex;
   flex-direction: column;
