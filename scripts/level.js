@@ -130,6 +130,10 @@ export default class Level {
     }
     // Coins
     this.checkoutCoins();
+    // Behind the level bounds
+    if (this.behindLevelBounds()) {
+      this.killPlayer();
+    }
     // Status
     if (this.progress.status == STATUS_KILLED) {
       this.attached = true;
@@ -265,10 +269,6 @@ export default class Level {
       case 'kill_bound':
         this.killPlayer();
         break;
-    }
-    // Behind the level bounds
-    if (this.behindLevelBounds()) {
-      this.killPlayer();
     }
     // Relevant last hitting (for ignoring NotHalt)
     this.last_hit = collisionCandidate;
