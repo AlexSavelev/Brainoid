@@ -86,7 +86,7 @@ canvas {
   cursor: pointer;
 
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background-color: #f9f9f9; /* TODO */
+  background-color: #f9f9f9;
   color: #333;
 }
 
@@ -147,7 +147,7 @@ canvas {
   position: absolute;
   height: 100%;
   width: 100%;
-  /* TODO */
+  /* Styles for many versions of Brow. */
   background: -moz-linear-gradient(left, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 49%, rgba(255, 255, 255, 1) 100%);
   /* FF3.6+ */
   background: -webkit-gradient(linear, left top, right top, color-stop(0%, rgba(255, 255, 255, 1)), color-stop(49%, rgba(255, 255, 255, 0)), color-stop(100%, rgba(255, 255, 255, 1)));
@@ -179,7 +179,7 @@ canvas {
   margin-bottom: 20px;
   overflow: hidden;
 
-  background-color: grey; /* TODO */
+  background-color: grey;
 
   border-radius: 10px;
 }
