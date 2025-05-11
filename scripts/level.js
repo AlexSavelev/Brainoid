@@ -263,11 +263,34 @@ export default class Level {
         this.ball.changeDirection({ x: collisionCandidate.dxm, y: collisionCandidate.dym });
         break;
       case 'kill_bound':
-        this.progress.kill();
+        this.killPlayer();
         break;
+    }
+    // Behind the level bounds
+    if (this.behindLevelBounds()) {
+      this.killPlayer();
     }
     // Relevant last hitting (for ignoring NotHalt)
     this.last_hit = collisionCandidate;
+  }
+
+  killPlayer() {
+    this.last_hit = { obj_type: 'None' };  // clear last hitting
+    this.progress.kill();
+  }
+
+  behindLevelBounds() {
+    // Check left
+    if (this.ball.aX + 2 * this.ball.radius < 0) {
+      return true;
+    }
+    // Check right
+    const levelWidth = this.width * this.tileset.width;
+    if (this.ball.aX - 2 * this.ball.radius > levelWidth) {
+      return true;
+    }
+    // Player in level bounds => OK
+    return false;
   }
 
   upBallToPlatform() {
